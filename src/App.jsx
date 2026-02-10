@@ -85,6 +85,9 @@ function App() {
 
         {/* PWA Install Prompt */}
         <PWAInstallPrompt />
+
+        {/* Notification Permission */}
+        <NotificationPermission />
       </Router>
     </UserProvider>
   );
