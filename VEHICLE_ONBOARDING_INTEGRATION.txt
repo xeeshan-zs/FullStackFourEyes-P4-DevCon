@@ -1,0 +1,29 @@
+// Add these handler functions after the handleConfirmReservation function in DriverDashboard.jsx
+
+const handleVehicleOnboardingComplete = async (vehicles) => {
+    if (!user?.uid) return;
+
+    // Save all vehicles to profile
+    for (const vehicle of vehicles) {
+        await addVehicle(user.uid, vehicle);
+    }
+
+    setUserVehicles(vehicles);
+    setShowVehicleOnboarding(false);
+};
+
+const handleSkipOnboarding = () => {
+    setShowVehicleOnboarding(false);
+};
+
+// Add this modal rendering just before the closing </div> of the main container,
+// after the Wallet Modal and before the final </div>:
+
+{/* Vehicle Onboarding Modal */}
+{showVehicleOnboarding && (
+    <VehicleOnboardingModal
+        onComplete={handleVehicleOnboardingComplete}
+        onSkip={handleSkipOnboarding}
+        userEmail={user?.email}
+    />
+)}

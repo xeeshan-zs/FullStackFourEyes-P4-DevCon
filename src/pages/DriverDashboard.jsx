@@ -10,7 +10,8 @@ import ReservationModal from '../components/ReservationModal';
 import { getParkingFacilities } from '../services/parkingService';
 import { createReservation } from '../services/reservationService';
 import { getRecommendedSpots } from '../services/recommendationService';
-import { getUserProfile, initializeUserProfile, updateWalletBalance } from '../services/userService';
+import VehicleOnboardingModal from '../components/VehicleOnboardingModal';
+import { addVehicle, getUserProfile, initializeUserProfile } from '../services/userProfileService';
 import styles from './DriverDashboard.module.css';
 
 function DriverDashboard() {
@@ -31,6 +32,8 @@ function DriverDashboard() {
     const [showAddCard, setShowAddCard] = useState(false);
     const [newCard, setNewCard] = useState({ number: '', exp: '', cvc: '', name: '' });
     const [loading, setLoading] = useState(true);
+    const [showVehicleOnboarding, setShowVehicleOnboarding] = useState(false);
+    const [userVehicles, setUserVehicles] = useState([]);
     const [activeFilters, setActiveFilters] = useState({
         maxPrice: 1000,
         maxDistance: 20,
@@ -38,6 +41,30 @@ function DriverDashboard() {
         availability: 'all',
         amenities: []
     });
+
+    // Check for vehicle onboarding on mount
+    useEffect(() => {
+        const checkOnboarding = async () => {
+            if (user?.uid) {
+                // Initialize profile if it doesn't exist
+                await initializeUserProfile(user.uid, user.email, 'driver');
+
+                // Get user profile
+                const profileResult = await getUserProfile(user.uid);
+                if (profileResult.success && profileResult.data) {
+                    const vehicles = profileResult.data.vehicles || [];
+                    setUserVehicles(vehicles);
+
+                    // Show onboarding if no vehicles
+                    if (vehicles.length === 0) {
+                        setShowVehicleOnboarding(true);
+                    }
+                }
+            }
+        };
+
+        checkOnboarding();
+    }, [user]);
 
     // Fetch facilities and initialize with AI recommendations
     useEffect(() => {
@@ -62,10 +89,7 @@ function DriverDashboard() {
     useEffect(() => {
         const syncBalance = async () => {
             if (user?.uid) {
-                const profile = await initializeUserProfile(user.uid, {
-                    email: user.email,
-                    displayName: user.displayName
-                });
+                const profile = await initializeUserProfile(user.uid, user.email, 'driver');
                 if (profile.success) {
                     setWalletBalance(profile.data.balance || 0);
                 }
