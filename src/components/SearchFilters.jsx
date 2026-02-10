@@ -1,21 +1,30 @@
 import { useState } from 'react';
-import { Search, SlidersHorizontal, MapPin, DollarSign, Clock } from 'lucide-react';
+import { Search, SlidersHorizontal, MapPin, DollarSign, Clock, X } from 'lucide-react';
+import styles from './SearchFilters.module.css';
 
 function SearchFilters({ onFilterChange, onSearch }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({
-        maxPrice: 10,
-        maxDistance: 5,
+        maxPrice: 1000,
+        maxDistance: 20,
         type: 'all',
         availability: 'all',
         amenities: []
     });
 
     const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
+        const query = e.target.value;
+        setSearchQuery(query);
         if (onSearch) {
-            onSearch(e.target.value);
+            onSearch(query);
+        }
+    };
+
+    const clearSearch = () => {
+        setSearchQuery('');
+        if (onSearch) {
+            onSearch('');
         }
     };
 
@@ -35,74 +44,91 @@ function SearchFilters({ onFilterChange, onSearch }) {
     };
 
     return (
-        <div className="search-filters">
+        <div className={styles.container}>
             {/* Search Bar */}
-            <div className="search-bar-container">
-                <div className="search-input-wrapper">
-                    <Search className="search-icon" size={20} />
+            <div className={styles.searchBarContainer}>
+                <div className={styles.searchInputWrapper}>
+                    <Search className={styles.searchIcon} size={20} />
                     <input
                         type="text"
-                        placeholder="Search by location, landmark, or address..."
+                        placeholder="Where do you want to park?"
                         value={searchQuery}
                         onChange={handleSearchChange}
-                        className="search-input"
+                        className={styles.searchInput}
                     />
+                    {searchQuery && (
+                        <button onClick={clearSearch} className="text-white/60 hover:text-white transition-colors mr-2">
+                            <X size={16} />
+                        </button>
+                    )}
                 </div>
+
+                {/* Filters Toggle */}
                 <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className="filter-toggle-btn"
+                    className={styles.filterToggleBtn}
+                    title="Filters"
                 >
                     <SlidersHorizontal size={20} />
-                    Filters
+                </button>
+
+                {/* Primary Search Action */}
+                <button
+                    className={styles.searchButton}
+                    onClick={() => onSearch && onSearch(searchQuery)}
+                    title="Search"
+                >
+                    <Search size={20} />
                 </button>
             </div>
 
             {/* Advanced Filters Panel */}
             {showFilters && (
-                <div className="filters-panel">
-                    <div className="filters-grid">
+                <div className={styles.filtersPanel}>
+                    <div className={styles.filtersGrid}>
                         {/* Price Filter */}
-                        <div className="filter-group">
-                            <label className="filter-label">
+                        <div className={styles.filterGroup}>
+                            <label className={styles.filterLabel}>
                                 <DollarSign size={16} />
-                                Max Price ($/hr)
+                                Max Price (PKR/hr)
                             </label>
                             <input
                                 type="range"
-                                min="1"
-                                max="20"
+                                min="50"
+                                max="1000"
+                                step="50"
                                 value={filters.maxPrice}
                                 onChange={(e) => handleFilterChange('maxPrice', parseFloat(e.target.value))}
-                                className="filter-range"
+                                className={styles.filterRange}
                             />
-                            <span className="filter-value">${filters.maxPrice}/hr</span>
+                            <span className={styles.filterValue}>PKR {filters.maxPrice}/hr</span>
                         </div>
 
                         {/* Distance Filter */}
-                        <div className="filter-group">
-                            <label className="filter-label">
+                        <div className={styles.filterGroup}>
+                            <label className={styles.filterLabel}>
                                 <MapPin size={16} />
                                 Max Distance (km)
                             </label>
                             <input
                                 type="range"
                                 min="0.5"
-                                max="10"
+                                max="20"
                                 step="0.5"
                                 value={filters.maxDistance}
                                 onChange={(e) => handleFilterChange('maxDistance', parseFloat(e.target.value))}
-                                className="filter-range"
+                                className={styles.filterRange}
                             />
-                            <span className="filter-value">{filters.maxDistance} km</span>
+                            <span className={styles.filterValue}>{filters.maxDistance} km</span>
                         </div>
 
                         {/* Type Filter */}
-                        <div className="filter-group">
-                            <label className="filter-label">Parking Type</label>
+                        <div className={styles.filterGroup}>
+                            <label className={styles.filterLabel}>Parking Type</label>
                             <select
                                 value={filters.type}
                                 onChange={(e) => handleFilterChange('type', e.target.value)}
-                                className="filter-select"
+                                className={styles.filterSelect}
                             >
                                 <option value="all">All Types</option>
                                 <option value="street">Street Parking</option>
@@ -113,15 +139,15 @@ function SearchFilters({ onFilterChange, onSearch }) {
                         </div>
 
                         {/* Availability Filter */}
-                        <div className="filter-group">
-                            <label className="filter-label">
+                        <div className={styles.filterGroup}>
+                            <label className={styles.filterLabel}>
                                 <Clock size={16} />
                                 Availability
                             </label>
                             <select
                                 value={filters.availability}
                                 onChange={(e) => handleFilterChange('availability', e.target.value)}
-                                className="filter-select"
+                                className={styles.filterSelect}
                             >
                                 <option value="all">All</option>
                                 <option value="available">Available Now</option>
@@ -131,14 +157,14 @@ function SearchFilters({ onFilterChange, onSearch }) {
                     </div>
 
                     {/* Amenities */}
-                    <div className="filter-group">
-                        <label className="filter-label">Amenities</label>
-                        <div className="amenities-grid">
+                    <div className={styles.filterGroup}>
+                        <label className={styles.filterLabel}>Amenities</label>
+                        <div className={styles.amenitiesGrid}>
                             {['EV Charging', 'Covered', 'Security', 'Disabled Access', '24/7'].map((amenity) => (
                                 <button
                                     key={amenity}
                                     onClick={() => toggleAmenity(amenity)}
-                                    className={`amenity-tag ${filters.amenities.includes(amenity) ? 'active' : ''}`}
+                                    className={`${styles.amenityTag} ${filters.amenities.includes(amenity) ? styles.active : ''}`}
                                 >
                                     {amenity}
                                 </button>
@@ -149,22 +175,17 @@ function SearchFilters({ onFilterChange, onSearch }) {
                     {/* Reset Filters */}
                     <button
                         onClick={() => {
-                            setFilters({
-                                maxPrice: 10,
+                            const defaults = {
+                                maxPrice: 500,
                                 maxDistance: 5,
                                 type: 'all',
                                 availability: 'all',
                                 amenities: []
-                            });
-                            onFilterChange && onFilterChange({
-                                maxPrice: 10,
-                                maxDistance: 5,
-                                type: 'all',
-                                availability: 'all',
-                                amenities: []
-                            });
+                            };
+                            setFilters(defaults);
+                            if (onFilterChange) onFilterChange(defaults);
                         }}
-                        className="reset-filters-btn"
+                        className={styles.resetFiltersBtn}
                     >
                         Reset Filters
                     </button>

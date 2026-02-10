@@ -26,56 +26,38 @@ function SystemStatus() {
     const getStatusColor = (val, threshold) => val > threshold ? 'text-red-500' : 'text-green-500';
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <Activity size={20} className="text-blue-600" />
+        <div className="bg-[#1E293B] rounded-2xl shadow-lg border border-white/5 p-6 h-full">
+            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Activity size={20} className="text-blue-400" />
+                </div>
                 System Health
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <Server size={14} />
-                        CPU Usage
+                {[
+                    { label: 'CPU Usage', value: `${stats.cpu}%`, icon: Server, color: stats.cpu > 80 ? 'text-red-400' : 'text-green-400' },
+                    { label: 'Memory', value: `${stats.memory}%`, icon: Database, color: stats.memory > 80 ? 'text-red-400' : 'text-green-400' },
+                    { label: 'Requests/s', value: stats.requests, icon: Activity, color: 'text-blue-400' },
+                    { label: 'Latency', value: `${stats.latency}ms`, icon: Wifi, color: stats.latency > 100 ? 'text-red-400' : 'text-green-400' }
+                ].map((item, i) => (
+                    <div key={i} className="p-4 bg-[#0B1120] rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                        <div className="flex items-center gap-2 text-gray-400 text-xs font-medium uppercase tracking-wider mb-2">
+                            <item.icon size={14} />
+                            {item.label}
+                        </div>
+                        <div className={`text-2xl font-bold ${item.color}`}>
+                            {item.value}
+                        </div>
                     </div>
-                    <div className={`text-xl font-bold ${getStatusColor(stats.cpu, 80)}`}>
-                        {stats.cpu}%
-                    </div>
-                </div>
-
-                <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <Database size={14} />
-                        Memory
-                    </div>
-                    <div className={`text-xl font-bold ${getStatusColor(stats.memory, 80)}`}>
-                        {stats.memory}%
-                    </div>
-                </div>
-
-                <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <Activity size={14} />
-                        Requests/s
-                    </div>
-                    <div className="text-xl font-bold text-gray-800">
-                        {stats.requests}
-                    </div>
-                </div>
-
-                <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                        <Wifi size={14} />
-                        Latency
-                    </div>
-                    <div className={`text-xl font-bold ${getStatusColor(stats.latency, 100)}`}>
-                        {stats.latency}ms
-                    </div>
-                </div>
+                ))}
             </div>
 
-            <div className="mt-4 flex items-center gap-2 text-xs text-green-600 bg-green-50 p-2 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="mt-6 flex items-center gap-3 text-xs font-medium text-green-400 bg-green-500/10 p-3 rounded-xl border border-green-500/20">
+                <div className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </div>
                 All systems operational
             </div>
         </div>

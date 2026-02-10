@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Calendar, Clock, CreditCard, ChevronRight, Check } from 'lucide-react';
+import { X, Calendar, Clock, CreditCard, ChevronRight, Check, MapPin } from 'lucide-react';
 import { calculateReservationCost } from '../utils/pricingEngine';
 import styles from './ReservationModal.module.css';
 
@@ -49,6 +49,14 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                         <div className={styles.facilityInfo}>
                             <h3>{facility.name}</h3>
                             <p>{facility.address}</p>
+                            <a
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${facility.location?.lat || 0},${facility.location?.lng || 0}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-blue-600 text-sm mt-1 hover:underline"
+                            >
+                                <MapPin size={14} /> Get Directions
+                            </a>
                         </div>
 
                         <div className={styles.formGroup}>
@@ -92,7 +100,7 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                         <div className={styles.summary}>
                             <div className={styles.summaryRow}>
                                 <span>Rate</span>
-                                <span>${cost.hourly}/hr</span>
+                                <span>PKR {cost.hourly}/hr</span>
                             </div>
                             <div className={styles.summaryRow}>
                                 <span>Duration</span>
@@ -100,7 +108,7 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                             </div>
                             <div className={`${styles.summaryRow} ${styles.total}`}>
                                 <span>Total</span>
-                                <span>${cost.total}</span>
+                                <span>PKR {cost.total}</span>
                             </div>
                         </div>
 
@@ -132,7 +140,7 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                         <div className={styles.summary}>
                             <div className={`${styles.summaryRow} ${styles.total}`}>
                                 <span>Amount to Pay</span>
-                                <span>${cost.total}</span>
+                                <span>PKR {cost.total}</span>
                             </div>
                         </div>
 

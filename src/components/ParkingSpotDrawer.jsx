@@ -45,7 +45,7 @@ function ParkingSpotDrawer({ facility, onClose, onReserve }) {
                     <div className="flex gap-4 mb-6">
                         <div className="flex-1 bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
                             <p className="text-blue-600 text-xs font-bold uppercase mb-1">Price</p>
-                            <p className="text-2xl font-bold text-gray-800">${facility.pricePerHour}<span className="text-sm font-normal text-gray-500">/hr</span></p>
+                            <p className="text-2xl font-bold text-gray-800">PKR {facility.pricePerHour}<span className="text-sm font-normal text-gray-500">/hr</span></p>
                         </div>
                         <div className="flex-1 bg-green-50 p-4 rounded-xl border border-green-100 text-center">
                             <p className="text-green-600 text-xs font-bold uppercase mb-1">Available</p>

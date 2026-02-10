@@ -87,7 +87,7 @@ function ParkingList({ facilities, onSelectFacility, sortBy = 'distance' }) {
                                     </div>
                                     <div className="stat">
                                         <DollarSign size={16} />
-                                        <span>${pricing.hourly}/hr</span>
+                                        <span>PKR {pricing.hourly}/hr</span>
                                         <span className="pricing-tier">{getPricingTier(pricing.hourly)}</span>
                                     </div>
                                     <div className="stat">

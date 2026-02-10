@@ -47,20 +47,52 @@ export const MOCK_FACILITIES = [
 ];
 
 import { db } from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+
+const COLLECTION_NAME = 'parkingSpots';
 
 export const getParkingFacilities = async () => {
     try {
-        const querySnapshot = await getDocs(collection(db, 'parkingSpots'));
+        const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
         const facilities = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
-
-        // If no data, return empty array (or fallback mock if strictly needed, but better to seed)
         return facilities;
     } catch (error) {
         console.error("Error fetching parking spots:", error);
         return [];
+    }
+};
+
+export const addFacility = async (facilityData) => {
+    try {
+        const docRef = await addDoc(collection(db, COLLECTION_NAME), facilityData);
+        return { success: true, id: docRef.id };
+    } catch (error) {
+        console.error("Error adding facility:", error);
+        return { success: false, error };
+    }
+};
+
+export const updateFacility = async (id, updates) => {
+    try {
+        const facilityRef = doc(db, COLLECTION_NAME, id);
+        await updateDoc(facilityRef, updates);
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating facility:", error);
+        return { success: false, error };
+    }
+};
+
+export const deleteFacility = async (id) => {
+    try {
+        const facilityRef = doc(db, COLLECTION_NAME, id);
+        await deleteDoc(facilityRef);
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting facility:", error);
+        return { success: false, error };
     }
 };

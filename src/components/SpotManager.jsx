@@ -8,9 +8,12 @@ const MOCK_SPOTS = Array.from({ length: 20 }, (_, i) => ({
     type: i < 2 ? 'DISABLED' : i < 5 ? 'EV' : 'STANDARD'
 }));
 
+import ParkingLotMap from './ParkingLotMap';
+
 function SpotManager() {
     const [spots, setSpots] = useState(MOCK_SPOTS);
     const [filter, setFilter] = useState('ALL');
+    const [viewMode, setViewMode] = useState('MAP'); // 'MAP' or 'GRID'
 
     const handleStatusToggle = (spotId) => {
         setSpots(spots.map(spot => {
@@ -22,23 +25,7 @@ function SpotManager() {
         }));
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'AVAILABLE': return 'bg-green-500 hover:bg-green-600';
-            case 'OCCUPIED': return 'bg-red-500 hover:bg-red-600';
-            case 'OUT_OF_SERVICE': return 'bg-gray-500 hover:bg-gray-600';
-            default: return 'bg-gray-300';
-        }
-    };
-
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'AVAILABLE': return <CheckCircle className="w-5 h-5 text-white" />;
-            case 'OCCUPIED': return <Car className="w-5 h-5 text-white" />;
-            case 'OUT_OF_SERVICE': return <Ban className="w-5 h-5 text-white" />;
-            default: return <AlertCircle className="w-5 h-5" />;
-        }
-    };
+    // ... (helper functions remain same)
 
     const filteredSpots = filter === 'ALL'
         ? spots
@@ -52,45 +39,66 @@ function SpotManager() {
                     Level 1 - Zone A
                 </h2>
 
-                {/* Filter Tabs */}
-                <div className="flex p-1 bg-black/20 rounded-xl">
-                    {['ALL', 'AVAILABLE', 'OCCUPIED'].map(f => (
+                <div className="flex gap-4">
+                    {/* View Toggle */}
+                    <div className="flex p-1 bg-black/20 rounded-xl">
                         <button
-                            key={f}
-                            onClick={() => setFilter(f)}
-                            className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${filter === f ? 'bg-white text-teal-600 shadow-lg' : 'text-white/60 hover:text-white'
-                                }`}
+                            onClick={() => setViewMode('MAP')}
+                            className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'MAP' ? 'bg-white text-teal-600 shadow-lg' : 'text-white/60 hover:text-white'}`}
                         >
-                            {f}
+                            Map
                         </button>
-                    ))}
+                        <button
+                            onClick={() => setViewMode('GRID')}
+                            className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${viewMode === 'GRID' ? 'bg-white text-teal-600 shadow-lg' : 'text-white/60 hover:text-white'}`}
+                        >
+                            Grid
+                        </button>
+                    </div>
+
+                    {/* Filter Tabs */}
+                    <div className="flex p-1 bg-black/20 rounded-xl">
+                        {['ALL', 'AVAILABLE', 'OCCUPIED'].map(f => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${filter === f ? 'bg-white text-teal-600 shadow-lg' : 'text-white/60 hover:text-white'}`}
+                            >
+                                {f}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Spots Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {filteredSpots.map(spot => (
-                    <button
-                        key={spot.id}
-                        onClick={() => handleStatusToggle(spot.id)}
-                        disabled={spot.status === 'OUT_OF_SERVICE'}
-                        className={`
-              relative p-4 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95
-              flex flex-col items-center justify-center gap-2 min-h-[100px] border shadow-lg group
-              ${getStatusColor(spot.status)}
-              ${spot.status === 'OUT_OF_SERVICE' ? 'opacity-50 cursor-not-allowed grayscale' : 'border-white/20 hover:shadow-xl hover:border-white/40'}
-            `}
-                    >
-                        <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm shadow-inner group-hover:scale-110 transition-transform">
-                            {getStatusIcon(spot.status)}
-                        </div>
-                        <span className="font-bold text-lg drop-shadow-md">{spot.id}</span>
-                        <span className="text-[10px] uppercase font-bold tracking-wider opacity-80 bg-black/10 px-2 py-0.5 rounded-full">
-                            {spot.type}
-                        </span>
-                    </button>
-                ))}
-            </div>
+            {/* Content Area */}
+            {viewMode === 'MAP' ? (
+                <ParkingLotMap spots={filteredSpots} onSpotClick={handleStatusToggle} />
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    {filteredSpots.map(spot => (
+                        <button
+                            key={spot.id}
+                            onClick={() => handleStatusToggle(spot.id)}
+                            disabled={spot.status === 'OUT_OF_SERVICE'}
+                            className={`
+                  relative p-4 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95
+                  flex flex-col items-center justify-center gap-2 min-h-[100px] border shadow-lg group
+                  ${getStatusColor(spot.status)}
+                  ${spot.status === 'OUT_OF_SERVICE' ? 'opacity-50 cursor-not-allowed grayscale' : 'border-white/20 hover:shadow-xl hover:border-white/40'}
+                `}
+                        >
+                            <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm shadow-inner group-hover:scale-110 transition-transform">
+                                {getStatusIcon(spot.status)}
+                            </div>
+                            <span className="font-bold text-lg drop-shadow-md">{spot.id}</span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider opacity-80 bg-black/10 px-2 py-0.5 rounded-full">
+                                {spot.type}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            )}
 
             <div className="mt-6 flex justify-between items-center text-sm opacity-70 border-t border-white/10 pt-4">
                 <div className="flex gap-4">
