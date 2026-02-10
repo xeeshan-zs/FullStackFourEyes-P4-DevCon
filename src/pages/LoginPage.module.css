@@ -42,17 +42,20 @@
 }
 
 .logoCircle {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    padding: 1.25rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .logoIcon {
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    /* Significantly larger */
+    height: 4rem;
     color: white;
 }
 

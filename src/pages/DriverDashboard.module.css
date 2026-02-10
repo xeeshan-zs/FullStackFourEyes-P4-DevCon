@@ -39,16 +39,20 @@
 }
 
 .logoBox {
-    background: rgba(59, 130, 246, 0.1);
-    padding: var(--space-sm);
+    background: rgba(59, 130, 246, 0.3);
+    /* Stronger contrast */
+    padding: 0.6rem;
     border-radius: var(--radius-md);
     border: var(--border-width) solid var(--color-primary);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
 }
 
 .logoIcon {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: var(--color-primary);
+    width: 2rem;
+    /* Resized */
+    height: 2rem;
+    color: white;
+    /* White icon on blue backdrop */
 }
 
 .headerText h1 {

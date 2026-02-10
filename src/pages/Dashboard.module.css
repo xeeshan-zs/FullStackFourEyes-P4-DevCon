@@ -34,18 +34,22 @@
 }
 
 .logoBox {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
+    background: rgba(59, 130, 246, 0.25);
+    /* More visible blue tint */
+    padding: 0.6rem;
+    border-radius: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .logoIcon {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: white;
+    width: 2rem;
+    /* Increased size */
+    height: 2rem;
+    color: #60A5FA;
+    /* Brighter blue */
 }
 
 .headerText h1 {

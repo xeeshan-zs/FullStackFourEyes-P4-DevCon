@@ -27,6 +27,7 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                 time,
                 duration,
                 totalCost: cost.total,
+                licensePlate: 'ABC1234', // TODO: Add actual input field
                 status: 'confirmed',
                 timestamp: new Date().toISOString()
             });
@@ -137,6 +138,15 @@ function ReservationModal({ facility, onClose, onConfirm }) {
 
                         <button onClick={handlePayment} className={styles.btnPrimary}>
                             Pay & Reserve
+                        </button>
+
+                        {/* Prototype Bypass Button */}
+                        <button
+                            onClick={handlePayment}
+                            className="w-full mt-3 py-3 px-4 bg-purple-600/20 text-purple-300 border border-purple-500/30 rounded-xl font-medium hover:bg-purple-600/30 transition-colors flex items-center justify-center gap-2"
+                        >
+                            <span className="text-xs uppercase font-bold tracking-wider">Prototype Mode</span>
+                            Bypass Payment
                         </button>
 
                         <button onClick={() => setStep(1)} className={styles.btnLink}>
