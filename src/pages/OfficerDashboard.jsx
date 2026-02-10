@@ -69,7 +69,8 @@ function OfficerDashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const officerId = user?.uid || 'officer-demo';
+                if (!user?.uid) return;
+                const officerId = user.uid;
                 const [tickets, recent, violationStats] = await Promise.all([
                     getOfficerTickets(officerId),
                     getRecentTickets(5),
@@ -144,7 +145,7 @@ function OfficerDashboard() {
             coordinates: currentLocation,
             notes: violationNotes,
             photoEvidence: plateEvidence,
-            issuedBy: user?.uid || 'officer-demo',
+            issuedBy: user.uid,
             officerEmail: user?.email || 'officer@parkit.com',
             officerName: user?.name || 'Officer',
             amount: violationType.fine
@@ -154,7 +155,7 @@ function OfficerDashboard() {
 
         if (ticket.success) {
             // Refresh data
-            const officerId = user?.uid || 'officer-demo';
+            const officerId = user.uid;
             const [tickets, violationStats] = await Promise.all([
                 getOfficerTickets(officerId),
                 getViolationStats(officerId)
