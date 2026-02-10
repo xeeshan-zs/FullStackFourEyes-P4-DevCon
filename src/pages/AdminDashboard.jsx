@@ -79,30 +79,30 @@ function AdminDashboard() {
     const NavItem = ({ id, icon: Icon, label }) => (
         <button
             onClick={() => setActiveTab(id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${activeTab === id
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+            className={`w-full flex items-center gap-4 px-6 py-3.5 transition-all duration-200 group relative ${activeTab === id
+                ? 'text-blue-400'
+                : 'text-gray-400 hover:text-gray-100 hover:bg-white/5'
                 }`}
         >
-            <Icon size={20} className={activeTab === id ? 'text-white' : 'text-gray-400 group-hover:text-white'} />
-            <span className={`font-medium ${!isSidebarOpen && 'hidden md:hidden lg:inline'}`}>{label}</span>
             {activeTab === id && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_white]" />
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
             )}
+            <Icon size={20} className={`transition-colors ${activeTab === id ? 'text-blue-400 drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]' : 'group-hover:text-white'}`} />
+            <span className="font-medium tracking-wide">{label}</span>
         </button>
     );
 
     const StatCard = ({ title, value, subtext, icon: Icon, color }) => (
-        <div className="bg-[#1E293B] rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all duration-300 shadow-lg group">
+        <div className="bg-[#1E293B]/50 backdrop-blur-md rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all duration-300 shadow-lg group hover:shadow-black/20">
             <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-xl ${color} bg-opacity-20 group-hover:scale-110 transition-transform`}>
+                <div className={`p-3 rounded-xl ${color} bg-opacity-10 group-hover:bg-opacity-20 transition-all`}>
                     <Icon size={24} className={color.replace('bg-', 'text-')} />
                 </div>
             </div>
             <div>
                 <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">{title}</p>
-                <h3 className="text-3xl font-bold text-white mb-2">{value}</h3>
-                <p className="text-sm text-gray-400 flex items-center gap-1.5">
+                <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">{value}</h3>
+                <p className="text-sm text-gray-500 flex items-center gap-1.5">
                     {subtext}
                 </p>
             </div>
@@ -113,61 +113,48 @@ function AdminDashboard() {
         <div className="min-h-screen bg-[#0B1120] text-gray-100 flex overflow-hidden font-sans selection:bg-blue-500/30">
             {/* Sidebar */}
             <aside
-                className={`flex-shrink-0 bg-[#0F172A]/80 backdrop-blur-2xl border-r border-white/5 transition-all duration-300 flex flex-col fixed md:relative z-50 h-full ${isSidebarOpen ? 'w-72' : 'w-20'
-                    }`}
+                className="bg-[#0B1120] border-r border-white/5 flex flex-col fixed left-0 top-0 bottom-0 z-50 w-72"
             >
-                <div className="h-24 flex items-center px-6 border-b border-white/5 gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 p-2">
+                <div className="h-28 flex items-center px-8 gap-4 mb-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 p-2 flex-shrink-0">
                         <img src="/app-logo.png" alt="Park It" className="w-full h-full object-contain" />
                     </div>
-                    {isSidebarOpen && (
-                        <div>
-                            <h1 className="font-bold text-lg tracking-tight">ParkIt<span className="text-blue-500">.</span></h1>
-                            <p className="text-xs text-gray-500 font-medium">Admin Console</p>
-                        </div>
-                    )}
+                    <div>
+                        <h1 className="font-bold text-xl tracking-tight text-white">ParkIt</h1>
+                        <p className="text-xs text-blue-400 font-medium tracking-wider uppercase">Admin</p>
+                    </div>
                 </div>
 
-                <div className="flex-1 py-8 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-                    <p className={`px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'text-center'}`}>
-                        {isSidebarOpen ? 'Analytics' : '...'}
-                    </p>
+                <div className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
+                    <p className="px-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Analytics</p>
                     <NavItem id="overview" icon={LayoutGrid} label="Dashboard" />
                     <NavItem id="revenue" icon={DollarSign} label="Revenue" />
                     <NavItem id="occupancy" icon={PieIcon} label="Occupancy" />
                     <NavItem id="reports" icon={FileText} label="Reports" />
 
-                    <div className="my-4 border-t border-white/5"></div>
+                    <div className="my-4 mx-6 border-t border-white/5"></div>
 
-                    <p className={`px-4 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ${!isSidebarOpen && 'text-center'}`}>
-                        {isSidebarOpen ? 'System' : '...'}
-                    </p>
+                    <p className="px-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">System</p>
                     <NavItem id="users" icon={Users} label="Users" />
                     <NavItem id="settings" icon={Settings} label="Settings" />
                 </div>
 
-                <div className="p-4 border-t border-white/5">
+                <div className="p-6 border-t border-white/5 flex-shrink-0">
                     <button
                         onClick={handleLogout}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors group ${!isSidebarOpen && 'justify-center'}`}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all group"
                     >
-                        <LogOut size={20} className="group-hover:scale-110 transition-transform" />
-                        {isSidebarOpen && <span className="font-medium">Sign Out</span>}
+                        <LogOut size={20} className="group-hover:text-red-400 transition-colors" />
+                        <span className="font-medium group-hover:text-red-400 transition-colors">Sign Out</span>
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+            <main className="flex-1 flex flex-col h-full overflow-hidden relative ml-72">
                 {/* Header */}
                 <header className="h-24 flex-shrink-0 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 z-40 sticky top-0">
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                        >
-                            <Menu size={24} />
-                        </button>
                         <div>
                             <h2 className="text-xl font-bold text-white">City Overview</h2>
                             <p className="text-sm text-gray-400">Real-time data across all zones</p>
@@ -196,7 +183,7 @@ function AdminDashboard() {
                 </header>
 
                 {/* Dashboard Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+                <div className="flex-1 overflow-y-auto no-scrollbar p-8">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-full text-gray-400">
                             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
