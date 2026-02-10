@@ -1,48 +1,99 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Import Google Fonts - Fira Code (headings) + Fira Sans (body) */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
 
-:root {
-  --primary: #3b82f6;
-  --primary-dark: #2563eb;
-  --success: #10b981;
-  --error: #ef4444;
-  --warning: #f59e0b;
+/* Import Design System Variables */
+@import './styles/variables.css';
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  body {
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl;
+  /* ========================================
+     OLED DARK MODE UTILITIES
+     ======================================== */
+
+  /* Card Styles (OLED Optimized) */
+  .card-oled {
+    background: var(--color-background-card);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    cursor: pointer;
   }
 
-  .glass-dark {
-    @apply bg-black/20 backdrop-blur-lg border-b border-white/10 shadow-lg;
+  .card-oled:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--color-primary);
   }
 
-  .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:bg-white/10 transition-all duration-300;
+  /* Elevated Surfaces */
+  .surface-elevated {
+    background: var(--color-background-elevated);
+    border: var(--border-width) solid var(--color-border);
+    box-shadow: var(--shadow-sm);
   }
 
+  /* Interactive Elements */
+  .clickable {
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  /* Glow Effects (Minimal for OLED) */
+  .glow-blue {
+    box-shadow: var(--glow-blue);
+  }
+
+  .glow-orange {
+    box-shadow: var(--glow-orange);
+  }
+
+  /* Map Popup Styles (maintained for MapComponent) */
   .glass-popup .leaflet-popup-content-wrapper {
-    @apply bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-0 overflow-hidden;
+    background: var(--color-background-card);
+    border: var(--border-width) solid var(--color-border);
+    box-shadow: var(--shadow-xl);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    overflow: hidden;
   }
 
   .glass-popup .leaflet-popup-tip {
-    @apply bg-white/90;
+    background: var(--color-background-card);
   }
 
   /* Custom Animations */

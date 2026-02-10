@@ -15,25 +15,24 @@ function HomeRoute() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
-        <div className="glass rounded-3xl p-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-        </div>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (user && role) {
+  // Redirect based on role
+  if (user) {
     return <Navigate to={`/${role}`} replace />;
   }
 
-  return <Navigate to="/login" replace />;
+  return <HomePage />;
 }
 
 function App() {
   return (
-    <Router>
-      <UserProvider>
+    <UserProvider>
+      <Router>
         <Routes>
           {/* Home route - redirects based on auth */}
           <Route path="/" element={<HomeRoute />} />
@@ -81,8 +80,8 @@ function App() {
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </UserProvider>
-    </Router>
+      </Router>
+    </UserProvider>
   );
 }
 

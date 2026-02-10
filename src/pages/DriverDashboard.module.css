@@ -1,0 +1,186 @@
+/**
+ * DriverDashboard CSS Module
+ * OLED Dark Mode with Technical Data Layout
+ */
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-background);
+    overflow: hidden;
+}
+
+/* Header/Navbar */
+.header {
+    background: var(--color-background-elevated);
+    border-bottom: var(--border-width) solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    z-index: var(--z-sticky);
+}
+
+.headerContent {
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logoGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.logoBox {
+    background: rgba(59, 130, 246, 0.1);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    border: var(--border-width) solid var(--color-primary);
+}
+
+.logoIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-primary);
+}
+
+.headerText h1 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    line-height: 1.2;
+    font-family: var(--font-heading);
+}
+
+.headerText p {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .headerText p {
+        display: block;
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.iconButton {
+    padding: var(--space-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border: var(--border-width) solid transparent;
+}
+
+.iconButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-primary);
+}
+
+.iconButton svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.logoutButton {
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    font-weight: var(--font-medium);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    border: var(--border-width) solid var(--color-error);
+}
+
+.logoutButton:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: translateY(-1px);
+}
+
+.logoutButton svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.logoutText {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .logoutText {
+        display: inline;
+    }
+}
+
+/* Map Area */
+.mapArea {
+    flex: 1;
+    position: relative;
+    padding: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+    .mapArea {
+        padding: var(--space-md);
+    }
+}
+
+/* Floating Action Button (Mobile) */
+.fab {
+    position: absolute;
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    z-index: var(--z-dropdown);
+    padding: var(--space-md);
+    background: var(--color-primary);
+    color: #FFFFFF;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-xl), var(--glow-blue);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border: none;
+}
+
+.fab:hover {
+    background: var(--color-secondary);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-xl), 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.fab svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .fab {
+        display: none;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .iconButton:hover,
+    .logoutButton:hover,
+    .fab:hover {
+        transform: none;
+        transition: none;
+    }
+}
