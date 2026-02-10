@@ -46,8 +46,21 @@ export const MOCK_FACILITIES = [
     }
 ];
 
+import { db } from './firebase';
+import { collection, getDocs } from 'firebase/firestore';
+
 export const getParkingFacilities = async () => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return MOCK_FACILITIES;
+    try {
+        const querySnapshot = await getDocs(collection(db, 'parkingSpots'));
+        const facilities = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // If no data, return empty array (or fallback mock if strictly needed, but better to seed)
+        return facilities;
+    } catch (error) {
+        console.error("Error fetching parking spots:", error);
+        return [];
+    }
 };
