@@ -25,6 +25,7 @@ import {
 import { signOut } from '../services/authService';
 import { useUser } from '../context/UserContext';
 import LicensePlateScanner from '../components/LicensePlateScanner';
+import CameraPreview from '../components/CameraPreview';
 import {
     issueTicket,
     validateLicensePlate,
@@ -485,37 +486,93 @@ function OfficerDashboard() {
 
                         {/* ===================== SCAN PLATE TAB ===================== */}
                         {activeTab === 'scan' && (
-                            <div className="space-y-8 animate-fade-in">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                        <Camera size={20} className="text-orange-400" />
-                                        License Plate Scanner
-                                    </h3>
-                                    {!scannedPlate && (
-                                        <button
-                                            onClick={() => setShowScanner(true)}
-                                            className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-orange-500/25 transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-                                        >
-                                            <Camera size={18} />
-                                            Open Scanner
-                                        </button>
-                                    )}
-                                </div>
+                            <div className="space-y-6 animate-fade-in">
+                                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <Camera size={20} className="text-orange-400" />
+                                    License Plate Scanner
+                                </h3>
 
                                 {!scannedPlate ? (
-                                    <div className="bg-white/5 border border-dashed border-white/20 rounded-3xl p-16 text-center">
-                                        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-orange-500/10 flex items-center justify-center">
-                                            <Camera size={40} className="text-orange-400" />
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {/* Camera Preview Section */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="font-bold text-white text-lg flex items-center gap-2">
+                                                    <Camera size={18} className="text-orange-400" />
+                                                    Camera Scan
+                                                </h4>
+                                                <span className="text-xs text-gray-400 bg-white/5 px-3 py-1 rounded-full">AI-Powered OCR</span>
+                                            </div>
+                                            <CameraPreview
+                                                onPlateDetected={async (plate, evidence) => {
+                                                    setScannedPlate(plate);
+                                                    setPlateEvidence(evidence || null);
+                                                    const result = await validateLicensePlate(plate);
+                                                    setValidationResult(result);
+                                                    if (!result.valid) {
+                                                        setSelectedViolation('no_reservation');
+                                                    }
+                                                }}
+                                            />
+                                            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-3">
+                                                <p className="text-xs text-blue-400">💡 Position the license plate within the orange frame and tap "Capture & Scan"</p>
+                                            </div>
                                         </div>
-                                        <h4 className="text-xl font-bold text-white mb-3">No Plate Scanned</h4>
-                                        <p className="text-gray-400 mb-6 max-w-md mx-auto">Use the camera to scan a vehicle's license plate. The AI-powered OCR will detect the plate number automatically.</p>
-                                        <button
-                                            onClick={() => setShowScanner(true)}
-                                            className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-orange-500/25 transition-all text-lg flex items-center gap-3 mx-auto hover:scale-[1.02] active:scale-[0.98]"
-                                        >
-                                            <Camera size={24} />
-                                            Start Scanning
-                                        </button>
+
+                                        {/* Manual Input Section */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="font-bold text-white text-lg flex items-center gap-2">
+                                                    ✍️ Manual Entry
+                                                </h4>
+                                                <span className="text-xs text-gray-400 bg-white/5 px-3 py-1 rounded-full">Type Manually</span>
+                                            </div>
+
+                                            <div className="bg-[#1E293B]/50 border border-white/5 rounded-2xl p-6 space-y-4">
+                                                <div>
+                                                    <label className="block text-sm text-gray-400 mb-2 font-medium">License Plate Number</label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="e.g., ABC-1234"
+                                                        value={scannedPlate}
+                                                        onChange={(e) => setScannedPlate(e.target.value.toUpperCase())}
+                                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/50 transition-all font-mono tracking-wider text-center"
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-2">Enter the vehicle's license plate number manually</p>
+                                                </div>
+
+                                                <button
+                                                    onClick={async () => {
+                                                        if (scannedPlate.trim()) {
+                                                            const result = await validateLicensePlate(scannedPlate.trim());
+                                                            setValidationResult(result);
+                                                            if (!result.valid) {
+                                                                setSelectedViolation('no_reservation');
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={!scannedPlate.trim()}
+                                                    className="w-full py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-orange-500/25 transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99]"
+                                                >
+                                                    Validate & Continue
+                                                </button>
+                                            </div>
+
+                                            <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
+                                                <p className="text-xs font-bold text-white">Common Plate Formats:</p>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {['ABC-123', 'AB-1234', 'ABC-1234', 'AB-123-C'].map(format => (
+                                                        <button
+                                                            key={format}
+                                                            onClick={() => setScannedPlate(format)}
+                                                            className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-2 rounded-lg transition-colors border border-white/10 font-mono"
+                                                        >
+                                                            {format}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

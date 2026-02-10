@@ -226,10 +226,10 @@ const AdminUsers = () => {
                             user.role === 'admin'
                               ? 'text-purple-400'
                               : user.role === 'operator'
-                              ? 'text-blue-400'
-                              : user.role === 'officer'
-                              ? 'text-orange-400'
-                              : 'text-gray-300'
+                                ? 'text-blue-400'
+                                : user.role === 'officer'
+                                  ? 'text-orange-400'
+                                  : 'text-gray-300'
                           }
                         >
                           {user.role}
@@ -238,13 +238,12 @@ const AdminUsers = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs border ${
-                          user.status === 'Active'
-                            ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                            : user.status === 'On Duty'
+                        className={`px-2 py-1 rounded-full text-xs border ${user.status === 'Active'
+                          ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                          : user.status === 'On Duty'
                             ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                             : 'bg-red-500/10 text-red-400 border-red-500/20'
-                        }`}
+                          }`}
                       >
                         {user.status || 'Unknown'}
                       </span>
@@ -299,7 +298,7 @@ const AdminUsers = () => {
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  className="w-full bg-[#020617] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   required
                 />
               </div>
@@ -311,7 +310,7 @@ const AdminUsers = () => {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full bg-[#020617] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all disabled:bg-slate-900/50 disabled:text-slate-100 disabled:opacity-100 disabled:cursor-not-allowed"
                   required
                   disabled={!!editingUser}
                 />
@@ -325,7 +324,7 @@ const AdminUsers = () => {
                     name="password"
                     value={form.password}
                     onChange={handleChange}
-                    className="w-full bg-[#020617] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                     required
                     minLength={6}
                   />
@@ -342,7 +341,7 @@ const AdminUsers = () => {
                     name="role"
                     value={form.role}
                     onChange={handleChange}
-                    className="w-full bg-[#020617] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>
@@ -357,7 +356,7 @@ const AdminUsers = () => {
                     name="status"
                     value={form.status}
                     onChange={handleChange}
-                    className="w-full bg-[#020617] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                   >
                     <option value="Active">Active</option>
                     <option value="On Duty">On Duty</option>
