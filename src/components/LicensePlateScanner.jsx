@@ -9,6 +9,7 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
     const [error, setError] = useState('');
     const [cameraActive, setCameraActive] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
+    const [initializingCamera, setInitializingCamera] = useState(true);
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -23,10 +24,13 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
     }, []);
 
     const startCamera = async () => {
+        setInitializingCamera(true);
+        setError('');
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
-                    facingMode: 'environment', // Use back camera on mobile
+                    facingMode: 'environment',
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 }
@@ -36,10 +40,21 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                 videoRef.current.srcObject = stream;
                 streamRef.current = stream;
                 setCameraActive(true);
+                setInitializingCamera(false);
             }
         } catch (err) {
-            setError('Camera access denied. Please enable camera permissions.');
             console.error('Camera error:', err);
+            setInitializingCamera(false);
+
+            if (err.name === 'NotAllowedError') {
+                setError('Camera permission denied. Please allow camera access in your browser settings.');
+            } else if (err.name === 'NotFoundError') {
+                setError('No camera found on this device.');
+            } else if (err.name === 'NotReadableError') {
+                setError('Camera is already in use by another application.');
+            } else {
+                setError('Failed to access camera: ' + err.message);
+            }
         }
     };
 
@@ -58,21 +73,13 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        // Set canvas dimensions to match video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-
-        // Draw current video frame to canvas
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert to data URL
         const imageData = canvas.toDataURL('image/jpeg');
         setCapturedImage(imageData);
-
-        // Stop camera after capture
         stopCamera();
-
-        // Process the captured image
         processImage(imageData);
     };
 
@@ -82,7 +89,6 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
         setExtractedText('');
 
         try {
-            // OCR Processing
             const result = await Tesseract.recognize(
                 imageData,
                 'eng',
@@ -95,11 +101,7 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                 }
             );
 
-            // Extract license plate pattern
             const text = result.data.text.toUpperCase().trim();
-
-            // Enhanced pattern matching for license plates
-            // Supports formats like: ABC-1234, AB123, ABC1234, etc.
             const platePattern = /[A-Z]{2,3}[-\s]?\d{2,4}[-\s]?[A-Z]?/g;
             const matches = text.match(platePattern);
 
@@ -108,7 +110,6 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                 setExtractedText(plate);
                 setConfidence(result.data.confidence);
 
-                // Auto-confirm if confidence is high
                 if (result.data.confidence > 70) {
                     setTimeout(() => {
                         if (onPlateDetected) {
@@ -118,7 +119,6 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                     }, 1500);
                 }
             } else {
-                // No pattern match, use cleaned text
                 const cleanedText = text.split('\n')[0]?.trim() || text;
                 setExtractedText(cleanedText);
                 setConfidence(result.data.confidence);
@@ -146,8 +146,8 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white">
                     <div className="flex items-center justify-between">
@@ -174,45 +174,55 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-6 min-h-[300px]">
+                    {/* Initializing Camera */}
+                    {initializingCamera && !error && (
+                        <div className="text-center py-12">
+                            <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
+                            <p className="text-gray-600 font-medium">Starting camera...</p>
+                            <p className="text-xs text-gray-400 mt-1">Please allow camera access</p>
+                        </div>
+                    )}
+
                     {/* Live Camera Feed */}
-                    {cameraActive && !capturedImage && (
-                        <div className="relative mb-4">
+                    {cameraActive && !capturedImage && !error && (
+                        <div className="relative">
                             <video
                                 ref={videoRef}
                                 autoPlay
                                 playsInline
+                                muted
                                 className="w-full h-64 object-cover rounded-xl bg-black"
                             />
                             <div className="absolute inset-0 border-4 border-dashed border-orange-400 rounded-xl pointer-events-none opacity-50"></div>
 
+                            <div className="absolute top-2 left-2 bg-black/60 text-white px-3 py-1 rounded-lg text-xs font-medium">
+                                📸 Point at license plate
+                            </div>
+
                             {/* Capture Button */}
                             <button
                                 onClick={captureImage}
-                                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center border-4 border-orange-500"
+                                className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-16 bg-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center border-4 border-orange-500 hover:scale-110 active:scale-95"
                             >
                                 <Camera size={28} className="text-orange-500" />
                             </button>
                         </div>
                     )}
 
-                    {/* Hidden canvas for capture */}
+                    {/* Hidden canvas */}
                     <canvas ref={canvasRef} className="hidden" />
 
-                    {/* Captured Image Preview */}
-                    {capturedImage && !scanning && (
-                        <div className="mb-4 rounded-xl overflow-hidden border-2 border-gray-200">
-                            <img
-                                src={capturedImage}
-                                alt="Captured"
-                                className="w-full h-48 object-cover"
-                            />
+                    {/* Captured Image */}
+                    {capturedImage && !scanning && !extractedText && (
+                        <div className="rounded-xl overflow-hidden border-2 border-gray-200">
+                            <img src={capturedImage} alt="Captured" className="w-full h-48 object-cover" />
                         </div>
                     )}
 
-                    {/* Loading State */}
+                    {/* Scanning State */}
                     {scanning && (
-                        <div className="text-center py-8">
+                        <div className="text-center py-12">
                             <Loader2 className="w-12 h-12 animate-spin text-orange-500 mx-auto mb-4" />
                             <p className="text-gray-600 font-medium">Scanning plate...</p>
                             <p className="text-xs text-gray-400 mt-1">AI is reading the license plate</p>
@@ -226,7 +236,7 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
                                 <div className="flex items-center gap-2 mb-2">
                                     <Check className="text-green-600" size={20} />
                                     <span className="text-sm font-semibold text-green-800">
-                                        Plate Detected {confidence > 70 ? '(Auto-confirmed)' : ''}
+                                        {confidence > 70 ? 'Auto-confirmed ✓' : 'Plate Detected'}
                                     </span>
                                 </div>
                                 <p className="text-2xl font-bold text-gray-900 tracking-wider">
@@ -258,11 +268,34 @@ function LicensePlateScanner({ onPlateDetected, onClose }) {
 
                     {/* Error State */}
                     {error && (
-                        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3">
-                            <AlertCircle className="text-red-600 flex-shrink-0" size={20} />
-                            <div>
-                                <p className="text-sm font-semibold text-red-800">Error</p>
-                                <p className="text-xs text-red-600 mt-1">{error}</p>
+                        <div className="space-y-4">
+                            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                                <div className="flex items-start gap-3 mb-3">
+                                    <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+                                    <div>
+                                        <p className="text-sm font-semibold text-red-800">Camera Error</p>
+                                        <p className="text-xs text-red-600 mt-1">{error}</p>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setError('');
+                                        startCamera();
+                                    }}
+                                    className="w-full py-2 px-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors text-sm"
+                                >
+                                    Retry Camera Access
+                                </button>
+                            </div>
+
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p className="text-xs text-blue-800 font-medium mb-2">💡 Troubleshooting:</p>
+                                <ul className="text-xs text-blue-700 space-y-1 ml-4 list-disc">
+                                    <li>Check browser camera permissions</li>
+                                    <li>Ensure no other app is using the camera</li>
+                                    <li>Try refreshing the page</li>
+                                </ul>
                             </div>
                         </div>
                     )}

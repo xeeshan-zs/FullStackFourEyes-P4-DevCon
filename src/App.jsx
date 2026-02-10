@@ -7,6 +7,7 @@ import OperatorDashboard from './pages/OperatorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import './index.css';
 import './map-styles.css';
 // Home route handler - redirects based on auth state
@@ -80,6 +81,9 @@ function App() {
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
+        {/* PWA Install Prompt */}
+        <PWAInstallPrompt />
       </Router>
     </UserProvider>
   );
