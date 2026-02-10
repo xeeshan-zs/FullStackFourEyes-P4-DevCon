@@ -492,7 +492,7 @@ function OfficerDashboard() {
                                     License Plate Scanner
                                 </h3>
 
-                                {!scannedPlate ? (
+                                {!validationResult ? (
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         {/* Camera Preview Section */}
                                         <div className="space-y-4">
