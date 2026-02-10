@@ -219,7 +219,13 @@ export const getViolationStats = async (officerId = null) => {
         }
 
         const querySnapshot = await getDocs(q);
-        const tickets = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const tickets = querySnapshot.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => {
+                const timeA = a.issuedAt?.toDate?.()?.getTime() || a.issuedAt?.seconds || 0;
+                const timeB = b.issuedAt?.toDate?.()?.getTime() || b.issuedAt?.seconds || 0;
+                return timeB - timeA;
+            });
 
         // Aggregate stats
         const stats = {
