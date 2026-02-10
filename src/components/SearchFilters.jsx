@@ -72,7 +72,7 @@ function SearchFilters({ onFilterChange, onSearch }) {
                         className={styles.filterToggleBtn}
                         title="Filters"
                     >
-                        <SlidersHorizontal size={18} strokeWidth={1.5} />
+                        <SlidersHorizontal size={18} strokeWidth={1.5} className="text-white" />
                     </button>
 
                     {/* Primary Search Action pushed to end */}
@@ -81,7 +81,7 @@ function SearchFilters({ onFilterChange, onSearch }) {
                         onClick={() => onSearch && onSearch(searchQuery)}
                         title="Search"
                     >
-                        <Search size={20} strokeWidth={1.2} />
+                        <Search size={20} strokeWidth={1.5} className="text-white" />
                     </button>
                 </div>
             </div>

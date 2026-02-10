@@ -156,8 +156,8 @@ function DriverDashboard() {
                             <img src="/app-logo.png" alt="App Logo" className={styles.logoIcon} />
                         </div>
                         <div className={styles.headerText}>
-                            <h1>Hello, Driver! 👋</h1>
-                            <p>Find your perfect spot</p>
+                            <h1>Driver Dashboard</h1>
+                            <p>Real-time parking availability</p>
                         </div>
                     </div>
 
@@ -177,14 +177,14 @@ function DriverDashboard() {
                                 className={`p-2 rounded-md transition-all ${viewMode === 'map' ? 'bg-white/20 text-white' : 'text-white/60 hover:text-white'}`}
                                 title="Map View"
                             >
-                                <MapIcon size={18} />
+                                <MapIcon size={18} className="text-white" />
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white/20 text-white' : 'text-white/60 hover:text-white'}`}
                                 title="List View"
                             >
-                                <List size={18} />
+                                <List size={18} className="text-white" />
                             </button>
                         </div>
 
@@ -193,15 +193,15 @@ function DriverDashboard() {
                             onClick={() => setShowWallet(true)}
                             className="p-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors flex items-center gap-2"
                         >
-                            <Wallet size={20} />
-                            <span className="hidden md:inline font-bold">PKR {walletBalance}</span>
+                            <Wallet size={20} className="text-white" />
+                            <span className="hidden md:inline font-bold text-white">PKR {walletBalance}</span>
                         </button>
 
                         <button
                             onClick={handleLogout}
                             className={styles.logoutButton}
                         >
-                            <LogOut size={20} />
+                            <LogOut size={20} className="text-white" />
                         </button>
                     </div>
                 </div>
@@ -262,8 +262,8 @@ function DriverDashboard() {
                                 <X size={20} />
                             </button>
                             <div className="flex items-center gap-3 text-white mb-6">
-                                <div className="p-2 bg-blue-500/20 rounded-xl">
-                                    <Wallet size={20} className="text-blue-400" />
+                                <div className="p-2 bg-white/10 rounded-xl">
+                                    <Wallet size={20} className="text-white" />
                                 </div>
                                 <h2 className="text-xl font-bold font-heading">My Wallet</h2>
                             </div>
@@ -284,7 +284,7 @@ function DriverDashboard() {
                                         <button
                                             key={amount}
                                             onClick={() => setWalletBalance(prev => prev + amount)}
-                                            className="py-3 bg-white/5 border border-white/10 rounded-xl font-bold text-white hover:bg-blue-600/20 hover:border-blue-500/50 transition-all active:scale-95"
+                                            className="py-3 bg-white/5 border border-white/5 rounded-xl font-bold text-white hover:bg-white/10 hover:border-white/20 transition-all active:scale-95"
                                         >
                                             +{amount}
                                         </button>
@@ -298,7 +298,7 @@ function DriverDashboard() {
                                     <h3 className="text-sm font-heading text-white/70 uppercase tracking-wider">Payment Methods</h3>
                                     <button
                                         onClick={() => setShowAddCard(!showAddCard)}
-                                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors font-bold"
+                                        className="text-xs text-white/60 hover:text-white transition-colors font-bold"
                                     >
                                         {showAddCard ? 'Cancel' : '+ Add New'}
                                     </button>
@@ -336,7 +336,7 @@ function DriverDashboard() {
                                                 setShowAddCard(false);
                                                 setNewCard({ number: '', exp: '', cvc: '', name: '' });
                                             }}
-                                            className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/40"
+                                            className="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-white/90 transition-all"
                                         >
                                             Save Card
                                         </button>
@@ -358,7 +358,7 @@ function DriverDashboard() {
                                                     </div>
                                                 </div>
                                                 {method.isDefault && (
-                                                    <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Default</span>
+                                                    <span className="text-[10px] bg-white/10 text-white/60 px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Default</span>
                                                 )}
                                             </div>
                                         ))}
@@ -369,7 +369,7 @@ function DriverDashboard() {
 
                         {/* Modal Footer */}
                         <div className="p-6 border-t border-white/5 bg-white/2">
-                            <button className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20 active:scale-95">
+                            <button className="w-full py-4 bg-white text-black rounded-2xl font-bold text-lg hover:bg-white/90 transition-all active:scale-95">
                                 Proceed to Top Up
                             </button>
                         </div>
