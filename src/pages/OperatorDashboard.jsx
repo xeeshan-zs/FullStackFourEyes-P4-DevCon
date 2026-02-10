@@ -203,8 +203,8 @@ function OperatorDashboard() {
                     }`}
             >
                 <div className="h-28 flex items-center px-8 gap-4 mb-4 flex-shrink-0">
-                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0">
-                        <Car className="text-white" size={24} />
+                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 flex-shrink-0 p-1.5">
+                        <img src="/app-logo.png" alt="Park It" className="w-full h-full object-contain" />
                     </div>
                     {isSidebarOpen && (
                         <div>
