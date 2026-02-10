@@ -53,16 +53,16 @@ function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${facility.location?.lat || 0},${facility.location?.lng || 0}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-blue-600 text-sm mt-1 hover:underline"
+                                className="inline-flex items-center gap-1 text-white/50 text-xs mt-1 hover:text-white transition-colors"
                             >
-                                <MapPin size={14} /> Get Directions
+                                <MapPin size={14} className="text-white/60" /> Get Directions
                             </a>
                         </div>
 
                         <div className={styles.formGroup}>
                             <label>Date</label>
                             <div className={styles.inputWrapper}>
-                                <Calendar size={18} />
+                                <Calendar size={18} className="text-white/40" />
                                 <input
                                     type="date"
                                     value={date}
@@ -75,7 +75,7 @@ function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
                         <div className={styles.formGroup}>
                             <label>Start Time</label>
                             <div className={styles.inputWrapper}>
-                                <Clock size={18} />
+                                <Clock size={18} className="text-white/40" />
                                 <input
                                     type="time"
                                     value={time}
@@ -150,7 +150,7 @@ function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
                             </div>
                         ) : (
                             <div className={styles.alertBox}>
-                                <CreditCard size={18} />
+                                <CreditCard size={18} className="text-white/40" />
                                 <span>Funds will be deducted from your wallet balance instantly.</span>
                             </div>
                         )}
@@ -170,14 +170,6 @@ function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
                             {walletBalance < cost.total ? 'Insufficient Balance' : 'Pay & Reserve'}
                         </button>
 
-                        {/* Prototype Bypass Button */}
-                        <button
-                            onClick={handlePayment}
-                            className="w-full mt-3 py-3 px-4 bg-purple-600/20 text-purple-300 border border-purple-500/30 rounded-xl font-medium hover:bg-purple-600/30 transition-colors flex items-center justify-center gap-2"
-                        >
-                            <span className="text-xs uppercase font-bold tracking-wider">Prototype Mode</span>
-                            Bypass Payment
-                        </button>
 
                         <button onClick={() => setStep(1)} className={styles.btnLink}>
                             Back
@@ -188,11 +180,11 @@ function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
                 {step === 3 && (
                     <div className={styles.successContent}>
                         <div className={styles.successIcon}>
-                            <Check size={40} />
+                            <Check size={40} strokeWidth={3} />
                         </div>
-                        <h2>Reservation Confirmed!</h2>
-                        <p>Your spot at {facility.name} is reserved.</p>
-                        <p className={styles.ticketId}>Ticket #{Math.floor(Math.random() * 100000)}</p>
+                        <h2>Reservation Confirmed</h2>
+                        <p>Access granted to {facility.name}.</p>
+                        <div className={styles.ticketId}>TICKET #{Math.floor(Math.random() * 100000)}</div>
                     </div>
                 )}
             </div>

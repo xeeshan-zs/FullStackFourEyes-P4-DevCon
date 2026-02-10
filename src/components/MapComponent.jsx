@@ -167,7 +167,7 @@ function MapComponent({ facilities: propFacilities, onSelectFacility }) {
                                             <div className="text-center">
                                                 <h3 className="font-bold">{facility.name}</h3>
                                                 <p className="text-sm">{count} spots available</p>
-                                                <p className="text-sm font-bold text-blue-600">PKR {facility.price || facility.pricePerHour}/hr</p>
+                                                <p className="text-sm font-bold text-white">PKR {facility.price || facility.pricePerHour}/hr</p>
                                             </div>
                                         </Popup>
                                     </Marker>

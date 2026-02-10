@@ -59,7 +59,7 @@ export const getDemandMultiplier = (occupied, total) => {
  * Calculate dynamic price for a parking facility
  */
 export const calculatePrice = (facility) => {
-    const baseRate = BASE_RATES[facility.type] || BASE_RATES.lot;
+    const baseRate = facility.pricePerHour || facility.price || BASE_RATES[facility.type] || BASE_RATES.lot;
     const timeMultiplier = getTimeMultiplier();
     const demandMultiplier = getDemandMultiplier(
         facility.occupied || 0,
