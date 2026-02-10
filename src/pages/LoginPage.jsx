@@ -89,7 +89,7 @@ function LoginPage() {
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
                         <div className="bg-white/20 p-4 rounded-full">
-                            <img src="/app-logo.png" alt="App Logo" className="w-12 h-12 object-contain" />
+                            <Icon className="w-12 h-12 text-white" />
                         </div>
                     </div>
                     <h1 className="text-4xl font-bold text-white mb-2">Park-it</h1>
