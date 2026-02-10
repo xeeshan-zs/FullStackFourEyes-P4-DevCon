@@ -23,6 +23,12 @@ function DriverDashboard() {
     const [showReservationModal, setShowReservationModal] = useState(false);
     const [showWallet, setShowWallet] = useState(false);
     const [walletBalance, setWalletBalance] = useState(2500);
+    const [paymentMethods, setPaymentMethods] = useState([
+        { id: 1, type: 'visa', last4: '4242', exp: '12/25', isDefault: true },
+        { id: 2, type: 'mastercard', last4: '8888', exp: '09/24', isDefault: false }
+    ]);
+    const [showAddCard, setShowAddCard] = useState(false);
+    const [newCard, setNewCard] = useState({ number: '', exp: '', cvc: '', name: '' });
     const [loading, setLoading] = useState(true);
     const [activeFilters, setActiveFilters] = useState({
         maxPrice: 1000,
@@ -240,40 +246,131 @@ function DriverDashboard() {
                 />
             )}
 
-            {/* Wallet Modal */}
+            {/* Wallet Modal - Standardized OLED Theme */}
             {showWallet && (
-                <div className="fixed inset-0 z-[600] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-scaleIn">
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white relative">
+                <div className="fixed inset-0 z-[600] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+                    <div className={`${styles.walletModal} bg-[#0B1120] border border-white/10 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col`}>
+                        {/* Modal Header */}
+                        <div className="p-6 bg-gradient-to-br from-blue-600/20 to-transparent border-b border-white/5 relative">
                             <button
-                                onClick={() => setShowWallet(false)}
-                                className="absolute top-4 right-4 text-white/80 hover:text-white"
+                                onClick={() => {
+                                    setShowWallet(false);
+                                    setShowAddCard(false);
+                                }}
+                                className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors"
                             >
-                                <X size={24} />
+                                <X size={20} />
                             </button>
-                            <h2 className="text-xl font-bold flex items-center gap-2">
-                                <Wallet size={24} /> My Wallet
-                            </h2>
-                            <div className="mt-6 text-center">
-                                <p className="text-sm opacity-80">Available Balance</p>
-                                <p className="text-4xl font-bold mt-1">PKR {walletBalance}</p>
+                            <div className="flex items-center gap-3 text-white mb-6">
+                                <div className="p-2 bg-blue-500/20 rounded-xl">
+                                    <Wallet size={20} className="text-blue-400" />
+                                </div>
+                                <h2 className="text-xl font-bold font-heading">My Wallet</h2>
+                            </div>
+
+                            <div className="text-center py-4 bg-white/5 rounded-2xl border border-white/5">
+                                <p className="text-xs text-white/50 uppercase tracking-widest font-heading mb-1">Available Balance</p>
+                                <p className="text-4xl font-bold text-white tabular-nums">PKR {walletBalance}</p>
                             </div>
                         </div>
-                        <div className="p-6">
-                            <h3 className="font-bold text-gray-800 mb-4">Quick Top Up</h3>
-                            <div className="grid grid-cols-3 gap-3 mb-6">
-                                {[500, 1000, 2000].map(amount => (
+
+                        {/* Modal Content - Scrollable */}
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+                            {/* Quick Top Up */}
+                            <section>
+                                <h3 className="text-sm font-heading text-white/70 uppercase tracking-wider mb-4">Quick Top Up</h3>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {[500, 1000, 2000].map(amount => (
+                                        <button
+                                            key={amount}
+                                            onClick={() => setWalletBalance(prev => prev + amount)}
+                                            className="py-3 bg-white/5 border border-white/10 rounded-xl font-bold text-white hover:bg-blue-600/20 hover:border-blue-500/50 transition-all active:scale-95"
+                                        >
+                                            +{amount}
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
+
+                            {/* Payment Methods */}
+                            <section>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-sm font-heading text-white/70 uppercase tracking-wider">Payment Methods</h3>
                                     <button
-                                        key={amount}
-                                        onClick={() => setWalletBalance(prev => prev + amount)}
-                                        className="py-2 px-3 border-2 border-indigo-100 rounded-xl font-semibold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 transition-all"
+                                        onClick={() => setShowAddCard(!showAddCard)}
+                                        className="text-xs text-blue-400 hover:text-blue-300 transition-colors font-bold"
                                     >
-                                        +{amount}
+                                        {showAddCard ? 'Cancel' : '+ Add New'}
                                     </button>
-                                ))}
-                            </div>
-                            <button className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
-                                Add Funds
+                                </div>
+
+                                {showAddCard ? (
+                                    <div className="space-y-3 animate-slideDown">
+                                        <input
+                                            type="text"
+                                            placeholder="Card Number"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-blue-500/50"
+                                            value={newCard.number}
+                                            onChange={(e) => setNewCard({ ...newCard, number: e.target.value })}
+                                        />
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <input
+                                                type="text"
+                                                placeholder="MM/YY"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-blue-500/50"
+                                                value={newCard.exp}
+                                                onChange={(e) => setNewCard({ ...newCard, exp: e.target.value })}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="CVC"
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-blue-500/50"
+                                                value={newCard.cvc}
+                                                onChange={(e) => setNewCard({ ...newCard, cvc: e.target.value })}
+                                            />
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                const id = Date.now();
+                                                setPaymentMethods([...paymentMethods, { id, type: 'visa', last4: newCard.number.slice(-4) || '0000', exp: newCard.exp || 'MM/YY', isDefault: false }]);
+                                                setShowAddCard(false);
+                                                setNewCard({ number: '', exp: '', cvc: '', name: '' });
+                                            }}
+                                            className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/40"
+                                        >
+                                            Save Card
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {paymentMethods.map(method => (
+                                            <div
+                                                key={method.id}
+                                                className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-white/20 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-2 bg-white/5 rounded-lg">
+                                                        <CreditCard size={20} className="text-white/60" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-white capitalize">{method.type} •••• {method.last4}</p>
+                                                        <p className="text-xs text-white/40">Expires {method.exp}</p>
+                                                    </div>
+                                                </div>
+                                                {method.isDefault && (
+                                                    <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full font-bold uppercase tracking-tighter">Default</span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="p-6 border-t border-white/5 bg-white/2">
+                            <button className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-900/20 active:scale-95">
+                                Proceed to Top Up
                             </button>
                         </div>
                     </div>
