@@ -1,38 +1,37 @@
 import { Navigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
-const ProtectedRoute = ({ children, requiredRole }) => {
-    const { user, role, loading } = useUser();
+// Supports either a single requiredRole or an array of allowedRoles
+const ProtectedRoute = ({ children, requiredRole, allowedRoles }) => {
+  const { user, role, loading } = useUser();
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
-                <div className="glass rounded-3xl p-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-                </div>
-            </div>
-        );
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+        <div className="glass rounded-3xl p-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    );
+  }
 
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
+  // Not logged in → send to login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-    if (requiredRole && role !== requiredRole) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center p-4">
-                <div className="glass rounded-3xl p-8 max-w-md text-center">
-                    <h2 className="text-3xl font-bold text-white mb-4">Access Denied</h2>
-                    <p className="text-white/90 mb-6">
-                        You don't have permission to access this page.
-                    </p>
-                    <Navigate to={`/${role}`} replace />
-                </div>
-            </div>
-        );
-    }
+  // Role-based checks
+  const hasRequiredRole =
+    (requiredRole && role === requiredRole) ||
+    (Array.isArray(allowedRoles) && allowedRoles.includes(role));
 
-    return children;
+  // If a role restriction is specified and the user doesn't match, redirect to their own dashboard
+  if ((requiredRole || allowedRoles) && !hasRequiredRole) {
+    return <Navigate to={`/${role || ''}`} replace />;
+  }
+
+  // User is allowed
+  return children;
 };
 
 export default ProtectedRoute;

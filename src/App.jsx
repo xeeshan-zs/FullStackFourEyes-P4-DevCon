@@ -16,7 +16,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const OfficerDashboard = lazy(() => import('./pages/OfficerDashboard'));
 const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-// Home route handler - redirects based on auth state
+// Home route handler - show login first, then redirect based on auth state
 function HomeRoute() {
   const { user, role, loading } = useUser();
 
@@ -28,12 +28,13 @@ function HomeRoute() {
     );
   }
 
-  // Redirect based on role
   if (user) {
+    // If already logged in, go straight to the role dashboard
     return <Navigate to={`/${role}`} replace />;
   }
 
-  return <HomePage />;
+  // If not logged in, always show the login page first
+  return <LoginPage />;
 }
 
 function App() {
