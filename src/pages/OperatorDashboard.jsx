@@ -433,6 +433,7 @@ function OperatorDashboard() {
                                     but for now, to avoid breaking edits, we let it fetch or we edit it next. */}
                                 <FacilityManager initialFacilities={facilities} />
                             </section>
+                        )}
 
                     </div>
 
