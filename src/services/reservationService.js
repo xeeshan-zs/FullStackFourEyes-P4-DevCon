@@ -1,16 +1,26 @@
 import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, updateDoc, increment } from 'firebase/firestore';
 
 /**
  * Create a new parking reservation
  */
 export const createReservation = async (reservationData) => {
     try {
+        // 1. Create the reservation record
         const docRef = await addDoc(collection(db, 'reservations'), {
             ...reservationData,
             createdAt: serverTimestamp(),
             status: 'confirmed'
         });
+
+        // 2. Update the facility occupancy in parkingSpots collection
+        if (reservationData.facilityId) {
+            const facilityRef = doc(db, 'parkingSpots', reservationData.facilityId);
+            await updateDoc(facilityRef, {
+                availableSpots: increment(-1),
+                occupied: increment(1)
+            });
+        }
 
         return {
             success: true,

@@ -63,15 +63,15 @@ function FacilityManager({ initialFacilities, readOnly = false }) {
             name: formData.name,
             address: formData.address,
             pricePerHour: parseFloat(formData.pricePerHour),
-            totalSpots: parseInt(formData.totalSpots),
+            totalSpots: parseInt(formData.totalSpots) || 0,
             type: formData.type,
             amenities: formData.amenities,
             location: {
-                lat: parseFloat(formData.lat),
-                lng: parseFloat(formData.lng)
+                lat: parseFloat(formData.lat) || 0,
+                lng: parseFloat(formData.lng) || 0
             },
             status: 'OPEN',
-            availableSpots: parseInt(formData.totalSpots) // Reset available on create/update logic (simplified)
+            availableSpots: parseInt(formData.totalSpots) || 0
         };
 
         if (currentFacility) {
@@ -315,13 +315,18 @@ function FacilityManager({ initialFacilities, readOnly = false }) {
                             </div>
 
                             <div className="flex items-center gap-4 text-sm pt-4 border-t border-white/10">
-                                <div className="flex items-center gap-2 text-gray-300 bg-black/20 px-3 py-1.5 rounded-lg">
+                                <div className="flex items-center gap-2 text-gray-300 bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
                                     <DollarSign size={16} className="text-green-400" />
-                                    <span className="font-bold text-white">PKR {facility.price || facility.pricePerHour}</span>/hr
+                                    <span className="font-bold text-white">PKR {facility.pricePerHour || facility.price || 0}</span>
+                                    <span className="text-[10px] text-gray-500 uppercase">/hr</span>
                                 </div>
-                                <div className="flex items-center gap-2 text-gray-300 bg-black/20 px-3 py-1.5 rounded-lg">
+                                <div className="flex items-center gap-2 text-gray-300 bg-black/20 px-3 py-1.5 rounded-lg border border-white/5">
                                     <Car size={16} className="text-blue-400" />
-                                    <span className="font-bold text-white">{facility.totalSpots}</span> Spots
+                                    <span className="font-bold text-white">
+                                        {Math.max(0, parseInt(facility.availableSpots) || 0)}
+                                    </span>
+                                    <span className="text-gray-500">/ {Math.max(parseInt(facility.totalSpots) || 0, parseInt(facility.availableSpots) || 0)}</span>
+                                    <span className="text-[10px] text-gray-500 ml-1 uppercase">Spots</span>
                                 </div>
                             </div>
 

@@ -101,17 +101,30 @@ function OperatorDashboard() {
                 setFacilities(data);
 
                 // 2. Calculate Real-time Stats
-                const totalSpots = data.reduce((sum, f) => sum + (parseInt(f.totalSpots) || 0), 0);
-                // Mocking occupied spots logic for now as it might be dynamic or inside the facility object
-                // Assuming 'occupied' field exists, else randomizing for demo if needed, but let's stick to data
-                const occupiedSpots = data.reduce((sum, f) => sum + (f.occupied || 0), 0);
-                const occupancyRate = totalSpots > 0 ? ((occupiedSpots / totalSpots) * 100).toFixed(1) : 0;
+                let totalCapacity = 0;
+                let currentlyOccupied = 0;
+
+                data.forEach(f => {
+                    const t = parseInt(f.totalSpots) || 0;
+                    const a = parseInt(f.availableSpots) || 0;
+                    const o = parseInt(f.occupied) || 0;
+
+                    // Effective capacity: use totalSpots if valid, else available + occupied
+                    const effectiveTotal = t > 0 ? t : Math.max(a, a + o);
+                    // Determine occupancy based on available field mapping
+                    const effectiveOccupied = f.occupied !== undefined ? o : (effectiveTotal - a);
+
+                    totalCapacity += effectiveTotal;
+                    currentlyOccupied += Math.max(0, Math.min(effectiveTotal, effectiveOccupied));
+                });
+
+                const occupancyRate = totalCapacity > 0 ? ((currentlyOccupied / totalCapacity) * 100).toFixed(1) : 0;
 
                 setAnalytics({
-                    totalSpots,
-                    occupiedSpots,
+                    totalSpots: totalCapacity,
+                    occupiedSpots: currentlyOccupied,
                     occupancyRate,
-                    pendingTickets: 5 // Mock for now, or fetch from tickets service
+                    pendingTickets: 5 // Mock for now
                 });
             } catch (error) {
                 console.error("Failed to sync dashboard:", error);
@@ -388,7 +401,7 @@ function OperatorDashboard() {
                                     <StatCard
                                         title="Total Capacity"
                                         value={analytics.totalSpots || 0}
-                                        subtext={`${(analytics.totalSpots - analytics.occupiedSpots) || 0} Spaces Available`}
+                                        subtext={`${Math.max(0, analytics.totalSpots - analytics.occupiedSpots) || 0} Spaces Available`}
                                         icon={MapPin}
                                         color="bg-blue-500"
                                         trend="+12% this week"
