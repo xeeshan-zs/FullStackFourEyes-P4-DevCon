@@ -10,6 +10,7 @@ import ReservationModal from '../components/ReservationModal';
 import { getParkingFacilities } from '../services/parkingService';
 import { createReservation } from '../services/reservationService';
 import { getRecommendedSpots } from '../services/recommendationService';
+import { getUserProfile, initializeUserProfile, updateWalletBalance } from '../services/userService';
 import styles from './DriverDashboard.module.css';
 
 function DriverDashboard() {
@@ -56,6 +57,23 @@ function DriverDashboard() {
 
         fetchSpots();
     }, []);
+
+    // Sync Wallet Balance from Firestore
+    useEffect(() => {
+        const syncBalance = async () => {
+            if (user?.uid) {
+                const profile = await initializeUserProfile(user.uid, {
+                    email: user.email,
+                    displayName: user.displayName
+                });
+                if (profile.success) {
+                    setWalletBalance(profile.data.balance || 0);
+                }
+            }
+        };
+
+        syncBalance();
+    }, [user]);
 
     const handleLogout = async () => {
         await signOut();
@@ -138,8 +156,12 @@ function DriverDashboard() {
         });
 
         if (result.success) {
-            // Deduct from wallet balance
-            setWalletBalance(prev => prev - totalCost);
+            // Deduct from wallet balance locally and in database
+            const newBalance = walletBalance - totalCost;
+            setWalletBalance(newBalance);
+            if (user?.uid) {
+                await updateWalletBalance(user.uid, newBalance);
+            }
 
             setShowReservationModal(false);
             setSelectedFacility(null);
@@ -295,7 +317,13 @@ function DriverDashboard() {
                                     {[500, 1000, 2000].map(amount => (
                                         <button
                                             key={amount}
-                                            onClick={() => setWalletBalance(prev => prev + amount)}
+                                            onClick={async () => {
+                                                const newBalance = walletBalance + amount;
+                                                setWalletBalance(newBalance);
+                                                if (user?.uid) {
+                                                    await updateWalletBalance(user.uid, newBalance);
+                                                }
+                                            }}
                                             className="py-3 bg-white/5 border border-white/5 rounded-xl font-bold text-white hover:bg-white/10 hover:border-white/20 transition-all active:scale-95"
                                         >
                                             +{amount}
