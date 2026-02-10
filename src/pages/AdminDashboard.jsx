@@ -4,6 +4,7 @@ import { BarChart3, TrendingUp, DollarSign, AlertCircle } from 'lucide-react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useUser } from '../context/UserContext';
 import { getCityAnalytics, getOccupancyTrends, getRevenueByFacility, getViolationStats } from '../services/analyticsService';
+import SystemStatus from '../components/SystemStatus';
 import Dashboard from './Dashboard.module.css';
 
 function AdminDashboard() {
@@ -106,6 +107,11 @@ function AdminDashboard() {
                                     <p className={Dashboard.statValue}>{analytics?.totalTickets}</p>
                                     <p className={Dashboard.statSubtext}>{analytics?.pendingTickets} pending</p>
                                 </div>
+                            </div>
+
+                            {/* Real-time System Status */}
+                            <div className="lg:col-span-1">
+                                <SystemStatus />
                             </div>
                         </div>
 
