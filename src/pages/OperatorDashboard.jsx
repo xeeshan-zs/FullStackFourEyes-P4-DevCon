@@ -6,7 +6,6 @@ import {
     LogOut,
     Car,
     AlertCircle,
-    Settings,
     MapPin,
     Bell,
     Search,
@@ -218,7 +217,6 @@ function OperatorDashboard() {
                 <div className="flex-1 py-4 space-y-1 overflow-y-auto no-scrollbar">
                     <NavItem id="overview" icon={LayoutDashboard} label="Dashboard" />
                     <NavItem id="facilities" icon={MapPin} label="My Facilities" />
-                    <NavItem id="settings" icon={Settings} label="Settings" />
                 </div>
 
                 <div className="p-6 border-t border-white/5 flex-shrink-0">
@@ -248,13 +246,6 @@ function OperatorDashboard() {
                     >
                         <MapPin size={24} />
                         <span className="text-[10px] font-medium">Facilities</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`flex flex-col items-center gap-1 ${activeTab === 'settings' ? 'text-blue-400' : 'text-gray-400'}`}
-                    >
-                        <Settings size={24} />
-                        <span className="text-[10px] font-medium">Settings</span>
                     </button>
                     <button
                         onClick={handleLogout}
@@ -442,15 +433,6 @@ function OperatorDashboard() {
                                     but for now, to avoid breaking edits, we let it fetch or we edit it next. */}
                                 <FacilityManager initialFacilities={facilities} />
                             </section>
-                        )}
-
-                        {activeTab === 'settings' && (
-                            <div className="bg-white/5 border border-white/10 rounded-3xl p-12 text-center animate-fade-in">
-                                <Settings size={48} className="mx-auto mb-4 text-gray-600" />
-                                <h3 className="text-xl font-bold text-white mb-2">Settings</h3>
-                                <p className="text-gray-400">Platform configuration coming soon.</p>
-                            </div>
-                        )}
 
                     </div>
 
