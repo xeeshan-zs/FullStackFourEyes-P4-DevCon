@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Settings, Bell, Shield, Wallet, Globe, Loader2, Check } from 'lucide-react';
+import { Settings, Bell, Wallet, Globe, Loader2, Check } from 'lucide-react';
 import {
     getSettings,
     updateGeneralSettings,
     updateNotificationSetting,
     updatePricing,
-    toggleMaintenanceMode,
-    toggleTwoFactorAuth
+    toggleMaintenanceMode
 } from '../../services/settingsService';
 
 const AdminSettings = () => {
@@ -58,8 +57,6 @@ const AdminSettings = () => {
             await updateNotificationSetting(field, newValue);
         } else if (category === 'general' && field === 'maintenanceMode') {
             await toggleMaintenanceMode(newValue);
-        } else if (category === 'security' && field === 'twoFactorAuth') {
-            await toggleTwoFactorAuth(newValue);
         }
 
         showSavedMessage();

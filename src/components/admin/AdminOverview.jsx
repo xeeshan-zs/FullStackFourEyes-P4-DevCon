@@ -10,11 +10,10 @@ import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
-import SystemStatus from '../SystemStatus';
 
 const AdminOverview = ({ analytics, occupancyData, revenueData, violationData, COLORS }) => {
     return (
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-7xl mx-auto space-y-4">
 
             {/* Key Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -149,9 +148,9 @@ const AdminOverview = ({ analytics, occupancyData, revenueData, violationData, C
 
                 </div>
 
-                {/* Right Column: Status & Pie Chart */}
-                <div className="space-y-8">
-                    <SystemStatus />
+                {/* Right Column: Pie Chart */}
+                <div className="space-y-4">
+                    {/* SystemStatus removed per user request */}
 
                     {/* Violation Donut Chart */}
                     <div className="bg-[#1E293B] rounded-2xl p-6 border border-white/5 shadow-lg">

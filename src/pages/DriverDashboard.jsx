@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Filter, ArrowRight, Wallet, X, CreditCard, LogOut, List, Map as MapIcon, Sparkles } from 'lucide-react';
+import { Search, MapPin, Filter, ArrowRight, Wallet, X, CreditCard, LogOut, List, Map as MapIcon, Sparkles, Car } from 'lucide-react';
 import { signOut } from '../services/authService';
 import { useUser } from '../context/UserContext';
 import MapComponent from '../components/MapComponent';
@@ -11,6 +11,7 @@ import { getParkingFacilities } from '../services/parkingService';
 import { createReservation } from '../services/reservationService';
 import { getRecommendedSpots } from '../services/recommendationService';
 import VehicleOnboardingModal from '../components/VehicleOnboardingModal';
+import VehicleManagementModal from '../components/VehicleManagementModal';
 import { addVehicle, getUserProfile, initializeUserProfile } from '../services/userProfileService';
 import styles from './DriverDashboard.module.css';
 
@@ -33,6 +34,7 @@ function DriverDashboard() {
     const [newCard, setNewCard] = useState({ number: '', exp: '', cvc: '', name: '' });
     const [loading, setLoading] = useState(true);
     const [showVehicleOnboarding, setShowVehicleOnboarding] = useState(false);
+    const [showVehicleManagement, setShowVehicleManagement] = useState(false);
     const [userVehicles, setUserVehicles] = useState([]);
     const [activeFilters, setActiveFilters] = useState({
         maxPrice: 1000,

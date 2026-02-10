@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Car, Plus, Trash2, CheckCircle } from 'lucide-react';
 
-function VehicleOnboardingModal({ onComplete, onSkip, userEmail }) {
+function VehicleOnboardingModal({ onComplete, userEmail }) {
     const [vehicles, setVehicles] = useState([
         { id: '1', plateNumber: '', make: '', model: '', color: '' }
     ]);
@@ -38,12 +38,6 @@ function VehicleOnboardingModal({ onComplete, onSkip, userEmail }) {
         setSaving(true);
         await onComplete(validVehicles);
         setSaving(false);
-    };
-
-    const handleSkip = () => {
-        if (onSkip) {
-            onSkip();
-        }
     };
 
     return (
@@ -146,17 +140,11 @@ function VehicleOnboardingModal({ onComplete, onSkip, userEmail }) {
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-white/5 bg-white/2 flex gap-3">
-                    <button
-                        onClick={handleSkip}
-                        className="flex-1 py-3 bg-white/5 border border-white/10 text-gray-300 rounded-xl font-medium hover:bg-white/10 transition-all"
-                    >
-                        Skip for Now
-                    </button>
+                <div className="p-6 border-t border-white/5 bg-white/2">
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {saving ? (
                             <>
@@ -170,6 +158,9 @@ function VehicleOnboardingModal({ onComplete, onSkip, userEmail }) {
                             </>
                         )}
                     </button>
+                    <p className="text-center text-xs text-gray-500 mt-3">
+                        At least one vehicle is required to use ParkIt
+                    </p>
                 </div>
             </div>
         </div>

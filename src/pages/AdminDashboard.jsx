@@ -10,7 +10,6 @@ import {
     Search,
     Bell,
     Users,
-    Settings,
     LayoutGrid,
     FileText,
     PieChart as PieIcon
@@ -27,7 +26,6 @@ import AdminRevenue from '../components/admin/AdminRevenue';
 import AdminOccupancy from '../components/admin/AdminOccupancy';
 import AdminReports from '../components/admin/AdminReports';
 import AdminUsers from '../components/admin/AdminUsers';
-import AdminSettings from '../components/admin/AdminSettings';
 
 function AdminDashboard() {
     const { user, logout } = useUser();
@@ -37,7 +35,7 @@ function AdminDashboard() {
     const [revenueData, setRevenueData] = useState([]);
     const [violationData, setViolationData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
@@ -78,7 +76,13 @@ function AdminDashboard() {
 
     const NavItem = ({ id, icon: Icon, label }) => (
         <button
-            onClick={() => setActiveTab(id)}
+            onClick={() => {
+                setActiveTab(id);
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth < 768) {
+                    setIsSidebarOpen(false);
+                }
+            }}
             className={`w-full flex items-center gap-4 px-6 py-3.5 transition-all duration-200 group relative ${activeTab === id
                 ? 'text-blue-400'
                 : 'text-gray-400 hover:text-gray-100 hover:bg-white/5'
@@ -111,9 +115,18 @@ function AdminDashboard() {
 
     return (
         <div className="min-h-screen bg-[#0B1120] text-gray-100 flex overflow-hidden font-sans selection:bg-blue-500/30">
+            {/* Backdrop Overlay for Mobile */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
             <aside
-                className="bg-[#0B1120] border-r border-white/5 flex flex-col fixed left-0 top-0 bottom-0 z-50 w-72"
+                className={`bg-[#0B1120] border-r border-white/5 flex flex-col fixed left-0 top-0 bottom-0 z-50 w-72 transition-transform duration-300 md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}
             >
                 <div className="h-28 flex items-center px-8 gap-4 mb-4 flex-shrink-0">
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 p-2 flex-shrink-0">
@@ -136,7 +149,6 @@ function AdminDashboard() {
 
                     <p className="px-6 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">System</p>
                     <NavItem id="users" icon={Users} label="Users" />
-                    <NavItem id="settings" icon={Settings} label="Settings" />
                 </div>
 
                 <div className="p-6 border-t border-white/5 flex-shrink-0">
@@ -151,18 +163,25 @@ function AdminDashboard() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative ml-72">
+            <main className="flex-1 flex flex-col h-full overflow-hidden relative md:ml-72">
                 {/* Header */}
-                <header className="h-24 flex-shrink-0 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 z-40 sticky top-0">
-                    <div className="flex items-center gap-4">
+                <header className="h-16 md:h-24 flex-shrink-0 bg-[#0B1120]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-4 md:px-8 z-40 sticky top-0">
+                    <div className="flex items-center gap-3 md:gap-4">
+                        {/* Hamburger Menu - Mobile Only */}
+                        <button
+                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                            className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors md:hidden"
+                        >
+                            <Menu size={24} />
+                        </button>
                         <div>
-                            <h2 className="text-xl font-bold text-white">City Overview</h2>
-                            <p className="text-sm text-gray-400">Real-time data across all zones</p>
+                            <h2 className="text-lg md:text-xl font-bold text-white">City Overview</h2>
+                            <p className="text-xs md:text-sm text-gray-400 hidden sm:block">Real-time data across all zones</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className="relative hidden md:block">
+                    <div className="flex items-center gap-2 md:gap-4">
+                        <div className="relative hidden lg:block">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={18} />
                             <input
                                 type="text"
@@ -171,11 +190,11 @@ function AdminDashboard() {
                             />
                         </div>
                         <button className="p-2 relative text-gray-400 hover:text-white hover:bg-white/5 rounded-full transition-colors">
-                            <Bell size={20} />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0B1120]"></span>
+                            <Bell size={18} className="md:w-5 md:h-5" />
+                            <span className="absolute top-1.5 right-1.5 md:top-2 md:right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0B1120]"></span>
                         </button>
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20">
-                            <div className="w-full h-full rounded-full bg-[#0B1120] flex items-center justify-center text-sm font-bold">
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20">
+                            <div className="w-full h-full rounded-full bg-[#0B1120] flex items-center justify-center text-xs md:text-sm font-bold">
                                 AD
                             </div>
                         </div>
@@ -183,7 +202,7 @@ function AdminDashboard() {
                 </header>
 
                 {/* Dashboard Content */}
-                <div className="flex-1 overflow-y-auto no-scrollbar p-8">
+                <div className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-6 lg:p-8">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-full text-gray-400">
                             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -204,7 +223,6 @@ function AdminDashboard() {
                             {activeTab === 'occupancy' && <AdminOccupancy occupancyData={occupancyData} />}
                             {activeTab === 'reports' && <AdminReports />}
                             {activeTab === 'users' && <AdminUsers />}
-                            {activeTab === 'settings' && <AdminSettings />}
                         </div>
                     )}
 
