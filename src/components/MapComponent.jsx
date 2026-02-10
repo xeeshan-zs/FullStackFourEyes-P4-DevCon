@@ -18,15 +18,23 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Custom icons based on availability
-const greenIcon = new L.DivIcon({
-    className: 'bg-transparent',
-    html: `<div class="marker-pulse relative">
-          <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png" style="width: 25px; height: 41px;">
-         </div>`,
+// Colored markers for different status
+const greenIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: iconShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+});
+
+const orangeIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
 });
 
 const redIcon = new L.Icon({
@@ -36,16 +44,6 @@ const redIcon = new L.Icon({
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
-});
-
-const orangeIcon = new L.DivIcon({
-    className: 'bg-transparent',
-    html: `<div class="marker-pulse relative">
-          <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png" style="width: 25px; height: 41px;">
-         </div>`,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
 });
 
 function MapComponent({ facilities: propFacilities, onSelectFacility }) {
@@ -59,32 +57,32 @@ function MapComponent({ facilities: propFacilities, onSelectFacility }) {
     const [internalSelected, setInternalSelected] = useState(null);
 
     useEffect(() => {
-        if (propFacilities) {
-            setFacilities(propFacilities);
-            setLoading(false);
-        } else {
-            const fetchFacilities = async () => {
-                try {
-                    const data = await getParkingFacilities();
-                    setFacilities(data);
-                } catch (error) {
-                    console.error("Failed to fetch parking data", error);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            fetchFacilities();
-        }
+        const fetchFacilities = async () => {
+            // If facilities are passed as props, use them
+            if (propFacilities && propFacilities.length > 0) {
+                setFacilities(propFacilities);
+                setLoading(false);
+            } else {
+                // Otherwise fetch from service
+                const data = await getParkingFacilities();
+                setFacilities(data);
+                setLoading(false);
+            }
+        };
+
+        fetchFacilities();
     }, [propFacilities]);
 
+    // Handle marker click
     const handleMarkerClick = (facility) => {
         if (onSelectFacility) {
+            // If external handler provided, use it
             onSelectFacility(facility);
         } else {
+            // Otherwise use internal state
             setInternalSelected(facility);
         }
     };
-
 
     const handleLocateMe = () => {
         if (navigator.geolocation) {
@@ -178,23 +176,19 @@ function MapComponent({ facilities: propFacilities, onSelectFacility }) {
                         </button>
                     </>
                 )}
-            </MapContainer>
-                )}
-        </div >
+            </div>
 
-            {/* Drawer Integration (only if using internal state) */ }
-    {
-        !onSelectFacility && internalSelected && (
-            <ParkingSpotDrawer
-                facility={internalSelected}
-                onClose={() => setInternalSelected(null)}
-                onReserve={(facility) => {
-                    alert(`Reservation for ${facility.name} starting... (Module 4)`);
-                    setInternalSelected(null);
-                }}
-            />
-        )
-    }
+            {/* Drawer Integration (only if using internal state) */}
+            {!onSelectFacility && internalSelected && (
+                <ParkingSpotDrawer
+                    facility={internalSelected}
+                    onClose={() => setInternalSelected(null)}
+                    onReserve={(facility) => {
+                        alert(`Reservation for ${facility.name} starting... (Module 4)`);
+                        setInternalSelected(null);
+                    }}
+                />
+            )}
         </>
     );
 }
