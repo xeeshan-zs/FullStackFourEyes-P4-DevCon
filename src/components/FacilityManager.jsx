@@ -21,11 +21,11 @@ function FacilityManager({ initialFacilities, readOnly = false }) {
     });
 
     useEffect(() => {
-        if (!initialFacilities) {
-            loadFacilities();
-        } else {
+        if (initialFacilities && initialFacilities.length >= 0) {
             setFacilities(initialFacilities);
             setLoading(false);
+        } else if (!initialFacilities) {
+            loadFacilities();
         }
     }, [initialFacilities]);
 

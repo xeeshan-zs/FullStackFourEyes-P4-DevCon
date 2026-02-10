@@ -54,10 +54,16 @@ const COLLECTION_NAME = 'parkingSpots';
 export const getParkingFacilities = async () => {
     try {
         const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
-        const facilities = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        const facilities = querySnapshot.docs
+            .map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }))
+            .filter(f =>
+                f.name &&
+                f.name.length > 2 &&
+                (parseInt(f.totalSpots) || 0) < 5000
+            );
         return facilities;
     } catch (error) {
         console.error("Error fetching parking spots:", error);

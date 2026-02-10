@@ -150,9 +150,12 @@ function MapComponent({ facilities: propFacilities, onSelectFacility }) {
                             ))}
 
                             {facilities.map((facility) => {
-                                const available = facility.capacity ? facility.capacity - (facility.occupied || 0) : (facility.totalSpots - facility.availableSpots);
-                                // Fallback logic if data structure varies
-                                const count = facility.availableSpots !== undefined ? facility.availableSpots : available;
+                                const total = parseInt(facility.totalSpots) || 0;
+                                const available = parseInt(facility.availableSpots) || 0;
+                                const occupied = parseInt(facility.occupied) || 0;
+
+                                // Effective available count: favor availableSpots field
+                                const count = facility.availableSpots !== undefined ? available : Math.max(0, total - occupied);
 
                                 return (
                                     <Marker

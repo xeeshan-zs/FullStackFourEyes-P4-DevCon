@@ -440,7 +440,7 @@ function OperatorDashboard() {
                                 {/* We pass nothing to FacilityManager, it fetches itself.
                                     Ideally, we should pass 'facilities' so it doesn't double-fetch,
                                     but for now, to avoid breaking edits, we let it fetch or we edit it next. */}
-                                <FacilityManager />
+                                <FacilityManager initialFacilities={facilities} />
                             </section>
                         )}
 
