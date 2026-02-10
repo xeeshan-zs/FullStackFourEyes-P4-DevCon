@@ -8,6 +8,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import OfficerDashboard from './pages/OfficerDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import NotificationPermission from './components/NotificationPermission';
 import './index.css';
 import './map-styles.css';
 // Home route handler - redirects based on auth state
