@@ -15,22 +15,33 @@
 ## 🚀 Project Overview
 **Park It** is a smart parking and traffic management solution designed to optimize urban mobility. The application provides role-based access for Drivers, Traffic Officers, and Administrators to manage parking resources and traffic flow effectively.
 
-### ✨ Features
-- **Authentication & Authorization**: Secure login with role-based redirection (Driver, Officer, Admin).
+### ✨ Implemented Features
+- **Authentication & Authorization**: Secure login with role-based redirection (Driver, Officer, Admin) using Firebase Auth.
 - **Interactive Dashboards**: Tailored views for each user role.
-    - **Driver**: Find parking, view status.
-    - **Officer**: Monitor traffic, manage violations.
-    - **Admin**: System oversight and user management.
+    - **Driver**: Find parking on interactive maps, book spots, and manage vehicles.
+    - **Officer**: License plate scanning (OCR), issue tickets, and monitor traffic violations.
+    - **Admin**: Comprehensive analytics, report generation (PDF/CSV), and system oversight.
+- **Smart Maps**: Integrated **Leaflet** maps for real-time parking spot location and navigation.
+- **Digital Wallet**: Simulated wallet for seamless parking payments.
+- **Report System**: Automated generation of violation and revenue reports.
 - **Modern UI/UX**: Responsive design utilizing Glassmorphism effects and Tailwind CSS.
-- **Real-time Updates**: (Planned) Integration with Firebase Firestore.
+- **AI/ML Integration**:
+    - **Demand Prediction**: Linear Regression algorithm to forecast parking occupancy.
+    - **License Plate Recognition**: Optical Character Recognition (OCR) using Tesseract.js.
 
 ---
 
 ## 🛠️ Technology Stack
 - **Frontend**: React (Vite), Tailwind CSS
-- **Backend/Database**: Firebase (Authentication, Firestore)
-- **State Management**: React Context API
-- **Styling**: Tailwind CSS, Custom CSS (Glassmorphism)
+- **Backend/Database**: Firebase (Authentication, Firestore, Storage)
+- **Maps & Navigation**: Leaflet, React-Leaflet
+- **Data Visualization**: Recharts
+- **AI & Logic**: 
+    - **OCR**: Tesseract.js
+    - **Prediction**: Custom Linear Regression Algorithm
+- **Reporting**: jsPDF, jsPDF-AutoTable
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
 
 ---
 
@@ -78,16 +89,8 @@
 | **Driver** | `driver@parkit.com` | `driver123` |
 | **Officer** | `officer@parkit.com` | `officer123` |
 
-*(Note: Ensure these users are created in your Firebase Authentication console or use the provided seeder if available.)*
-
 ---
 
-## ⚠️ Known Issues & Limitations
-- **Map Integration**: Currently using placeholder views for maps.
-- **Mobile Optimization**: Optimized primarily for tablet/desktop; mobile adjustments in progress.
-
-## 🤖 AI/ML Model Details
-- **Current Status**: Integration verification in progress.
-- **Proposed Model**: (e.g., YOLO for vehicle detection or specialized traffic algorithms - *Update this section*)
-
----
+## ⚠️ Known Limitations
+- **Mobile Optimization**: Optimized primarily for tablet/desktop; fully responsive mobile layout is in beta.
+- **Payment Processing**: Uses a simulated wallet system for demonstration purposes.
