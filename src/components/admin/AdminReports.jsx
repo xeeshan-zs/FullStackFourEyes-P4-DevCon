@@ -1,12 +1,140 @@
-import { FileText, Download, Calendar, Filter } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { FileText, Download, Calendar, Filter, Loader2, FileSpreadsheet } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { getRecentTickets, getViolationStats } from '../../services/ticketingService';
 
 const AdminReports = () => {
+    const [loading, setLoading] = useState(false);
+    const [stats, setStats] = useState(null);
+    const [tickets, setTickets] = useState([]);
+
+    useEffect(() => {
+        fetchReportData();
+    }, []);
+
+    const fetchReportData = async () => {
+        setLoading(true);
+        try {
+            const [statsData, ticketsData] = await Promise.all([
+                getViolationStats(),
+                getRecentTickets(50) // Fetch last 50 for the report
+            ]);
+            setStats(statsData);
+            setTickets(ticketsData);
+        } catch (error) {
+            console.error("Error fetching report data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const generatePDF = () => {
+        const doc = new jsPDF();
+
+        // Title
+        doc.setFontSize(20);
+        doc.text("Violation Report", 14, 22);
+        doc.setFontSize(11);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+
+        // Summary Stats
+        if (stats) {
+            doc.setFontSize(14);
+            doc.text("Summary", 14, 45);
+
+            const summaryData = [
+                ['Total Tickets', stats.totalTickets],
+                ['Total Fines', `PKR ${stats.totalFines.toLocaleString()}`],
+                ['Pending', stats.pendingCount],
+                ['Resolved/Paid', stats.paidCount]
+            ];
+
+            autoTable(doc, {
+                startY: 50,
+                head: [['Metric', 'Value']],
+                body: summaryData,
+                theme: 'striped',
+                headStyles: { fillColor: [41, 128, 185] }
+            });
+        }
+
+        // Violations Table
+        doc.setFontSize(14);
+        doc.text("Recent Violations", 14, doc.lastAutoTable.finalY + 15);
+
+        const tableData = tickets.map(t => [
+            new Date(t.issuedAt?.toDate ? t.issuedAt.toDate() : new Date()).toLocaleDateString(),
+            t.licensePlate,
+            t.violationLabel || t.violationType,
+            `PKR ${t.amount}`,
+            t.status.toUpperCase(),
+            t.location
+        ]);
+
+        autoTable(doc, {
+            startY: doc.lastAutoTable.finalY + 20,
+            head: [['Date', 'Plate', 'Violation', 'Fine', 'Status', 'Location']],
+            body: tableData,
+            theme: 'grid',
+            headStyles: { fillColor: [231, 76, 60] },
+            styles: { fontSize: 8 }
+        });
+
+        doc.save('violation_report.pdf');
+    };
+
+    const generateCSV = () => {
+        if (!tickets.length) return;
+
+        // Headers
+        const headers = ['Date', 'Time', 'License Plate', 'Violation Type', 'Fine Amount', 'Status', 'Location', 'Officer'];
+
+        // Rows
+        const rows = tickets.map(t => {
+            const date = t.issuedAt?.toDate ? t.issuedAt.toDate() : new Date();
+            return [
+                date.toLocaleDateString(),
+                date.toLocaleTimeString(),
+                t.licensePlate,
+                t.violationLabel || t.violationType,
+                t.amount,
+                t.status,
+                (t.location || '').replace(/,/g, ' '), // Remove commas for CSV safety
+                t.officerName || 'Unknown'
+            ];
+        });
+
+        // Combine
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.join(','))
+        ].join('\n');
+
+        // Download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'violation_data.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const reports = [
+        {
+            id: 'violations',
+            title: 'Violation Audit Report',
+            date: 'Live Data',
+            type: 'Compliance',
+            size: 'Dynamic',
+            isLive: true
+        },
         { title: 'Daily Revenue Report', date: 'Today, 10:00 AM', type: 'Financial', size: '1.2 MB' },
         { title: 'Weekly Occupancy Summary', date: 'Yesterday, 06:00 PM', type: 'Operational', size: '2.4 MB' },
-        { title: 'Monthly Violation Audit', date: 'Oct 01, 2023', type: 'Compliance', size: '5.8 MB' },
         { title: 'User Activity Log', date: 'Sep 30, 2023', type: 'Security', size: '8.1 MB' },
-        { title: 'System Performance Review', date: 'Sep 28, 2023', type: 'Technical', size: '3.5 MB' },
     ];
 
     return (
@@ -35,7 +163,7 @@ const AdminReports = () => {
                                 <th className="px-6 py-4">Date Generated</th>
                                 <th className="px-6 py-4">Type</th>
                                 <th className="px-6 py-4">Size</th>
-                                <th className="px-6 py-4 text-right">Action</th>
+                                <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -46,20 +174,46 @@ const AdminReports = () => {
                                             <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
                                                 <FileText size={18} />
                                             </div>
-                                            <span className="font-medium text-white">{report.title}</span>
+                                            <div>
+                                                <span className="font-medium text-white block">{report.title}</span>
+                                                {report.isLive && <span className="text-xs text-orange-400">Live Database Generation</span>}
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">{report.date}</td>
                                     <td className="px-6 py-4">
-                                        <span className="px-2 py-1 bg-white/5 rounded text-xs border border-white/10">
+                                        <span className={`px-2 py-1 rounded text-xs border ${report.type === 'Compliance' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                                                'bg-white/5 border-white/10'
+                                            }`}>
                                             {report.type}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 font-mono">{report.size}</td>
                                     <td className="px-6 py-4 text-right">
-                                        <button className="text-blue-400 hover:text-blue-300 transition-colors">
-                                            <Download size={18} />
-                                        </button>
+                                        {report.isLive ? (
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={generateCSV}
+                                                    disabled={loading}
+                                                    className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors disabled:opacity-50"
+                                                    title="Download CSV"
+                                                >
+                                                    <FileSpreadsheet size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={generatePDF}
+                                                    disabled={loading}
+                                                    className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors disabled:opacity-50"
+                                                    title="Download PDF"
+                                                >
+                                                    <Download size={18} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button className="text-gray-500 hover:text-gray-300 transition-colors">
+                                                <Download size={18} />
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}
@@ -67,6 +221,12 @@ const AdminReports = () => {
                     </table>
                 </div>
             </div>
+            {loading && (
+                <div className="text-center text-gray-500 py-4">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                    Loading report data...
+                </div>
+            )}
         </div>
     );
 };

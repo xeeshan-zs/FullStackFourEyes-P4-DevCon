@@ -11,7 +11,109 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { useState } from 'react';
+import { getRecentTickets } from '../../services/ticketingService';
+
 const AdminOverview = ({ analytics, occupancyData, revenueData, violationData, COLORS }) => {
+    const [downloading, setDownloading] = useState(false);
+
+    const handleDownload = async (format) => {
+        setDownloading(true);
+        try {
+            // Fetch latest data for report
+            const tickets = await getRecentTickets(50);
+
+            if (format === 'pdf') {
+                const doc = new jsPDF();
+
+                // Header
+                doc.setFontSize(20);
+                doc.text("ParkIt - Executive Summary", 14, 22);
+                doc.setFontSize(11);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 30);
+
+                // Dashboard Metrics
+                doc.setFontSize(14);
+                doc.text("Key Performance Indicators", 14, 45);
+
+                const kpiData = [
+                    ['Occupancy Rate', `${analytics?.occupancyRate || 0}%`],
+                    ['Total Revenue', `PKR ${analytics?.totalRevenue || 0}`],
+                    ['Total Violations', analytics?.totalTickets || 0],
+                    ['Active Facilities', analytics?.facilities || 0]
+                ];
+
+                autoTable(doc, {
+                    startY: 50,
+                    head: [['Metric', 'Value']],
+                    body: kpiData,
+                    theme: 'striped',
+                    headStyles: { fillColor: [41, 128, 185] }
+                });
+
+                // Detailed Violations Table
+                doc.text("Recent Violations", 14, doc.lastAutoTable.finalY + 15);
+
+                const tableData = tickets.map(t => [
+                    new Date(t.issuedAt?.toDate ? t.issuedAt.toDate() : new Date()).toLocaleDateString(),
+                    t.licensePlate,
+                    t.violationLabel || t.violationType,
+                    `PKR ${t.amount}`,
+                    t.status.toUpperCase(),
+                    t.location
+                ]);
+
+                autoTable(doc, {
+                    startY: doc.lastAutoTable.finalY + 20,
+                    head: [['Date', 'Plate', 'Violation', 'Fine', 'Status', 'Location']],
+                    body: tableData,
+                    theme: 'grid',
+                    headStyles: { fillColor: [231, 76, 60] },
+                    styles: { fontSize: 8 }
+                });
+
+                doc.save('parkit_executive_report.pdf');
+            } else if (format === 'csv') {
+                if (!tickets.length) {
+                    alert('No data available for export');
+                    return;
+                }
+
+                const headers = ['Date', 'Time', 'License Plate', 'Violation Type', 'Fine Amount', 'Status', 'Location', 'Officer'];
+                const rows = tickets.map(t => {
+                    const date = t.issuedAt?.toDate ? t.issuedAt.toDate() : new Date();
+                    return [
+                        date.toLocaleDateString(),
+                        date.toLocaleTimeString(),
+                        t.licensePlate,
+                        t.violationLabel || t.violationType,
+                        t.amount,
+                        t.status,
+                        (t.location || '').replace(/,/g, ' '),
+                        t.officerName || 'Unknown'
+                    ];
+                });
+
+                const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'parkit_violation_data.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        } catch (error) {
+            console.error('Download failed:', error);
+            alert('Failed to generate report. Please try again.');
+        } finally {
+            setDownloading(false);
+        }
+    };
     return (
         <div className="max-w-7xl mx-auto space-y-4">
 
@@ -198,10 +300,36 @@ const AdminOverview = ({ analytics, occupancyData, revenueData, violationData, C
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg">
                         <FileText className="mb-4 text-white/80" size={32} />
                         <h3 className="text-xl font-bold mb-2">Generate Reports</h3>
-                        <p className="text-blue-100 mb-6 text-sm">Download comprehensive PDF analytics for stakeholders.</p>
-                        <button className="w-full py-3 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-sm">
-                            Download PDF
-                        </button>
+                        <p className="text-blue-100 text-sm mb-6">
+                            Download comprehensive analytics for stakeholders.
+                        </p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => handleDownload('pdf')}
+                                disabled={downloading}
+                                className="flex-1 bg-white text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {downloading ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                        Generating...
+                                    </>
+                                ) : (
+                                    'Download PDF'
+                                )}
+                            </button>
+                            <button
+                                onClick={() => handleDownload('csv')}
+                                disabled={downloading}
+                                className="flex-1 bg-blue-800/50 text-white py-3 rounded-xl font-bold hover:bg-blue-800/70 transition-colors border border-white/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {downloading ? (
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    'CSV'
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
