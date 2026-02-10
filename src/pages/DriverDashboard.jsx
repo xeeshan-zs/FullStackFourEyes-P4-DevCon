@@ -22,7 +22,7 @@ function DriverDashboard() {
                 <div className={styles.headerContent}>
                     <div className={styles.logoGroup}>
                         <div className={styles.logoBox}>
-                            <Car className={styles.logoIcon} />
+                            <img src="/app-logo.png" alt="App Logo" className="w-8 h-8 object-contain" />
                         </div>
                         <div className={styles.headerText}>
                             <h1>Find Parking</h1>

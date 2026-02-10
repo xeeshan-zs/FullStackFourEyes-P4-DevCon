@@ -57,7 +57,7 @@ function LoginPage() {
                 <div className={styles.logoSection}>
                     <div className={styles.logoWrapper}>
                         <div className={styles.logoCircle}>
-                            <Car className={styles.logoIcon} />
+                            <img src="/app-logo.png" alt="App Logo" className="w-8 h-8 object-contain" />
                         </div>
                     </div>
                     <h1 className={styles.title}>Park-it</h1>
