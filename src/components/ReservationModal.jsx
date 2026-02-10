@@ -3,7 +3,7 @@ import { X, Calendar, Clock, CreditCard, ChevronRight, Check, MapPin } from 'luc
 import { calculateReservationCost } from '../utils/pricingEngine';
 import styles from './ReservationModal.module.css';
 
-function ReservationModal({ facility, onClose, onConfirm }) {
+function ReservationModal({ facility, onClose, onConfirm, walletBalance = 0 }) {
     const [step, setStep] = useState(1); // 1: Details, 2: Payment, 3: Success
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [time, setTime] = useState('12:00');
@@ -122,20 +122,38 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                     <div className={styles.content}>
                         <h2 className={styles.title}>Payment Method</h2>
 
-                        <div className={styles.cardPreview}>
-                            <div className={styles.cardChip}></div>
-                            <div className={styles.cardNumber}>•••• •••• •••• 4242</div>
-                            <div className={styles.cardDetails}>
-                                <span>John Doe</span>
-                                <span>12/28</span>
+                        <div className={styles.walletSource}>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs text-white/40 uppercase tracking-widest font-heading">Your Wallet</span>
+                                <span className={`text-xs font-bold ${walletBalance < cost.total ? 'text-red-400' : 'text-green-400'}`}>
+                                    Balance: PKR {walletBalance}
+                                </span>
                             </div>
-                            <div className={styles.cardLogo}>VISA</div>
+                            <div className={styles.cardPreview}>
+                                <div className={styles.cardChip}></div>
+                                <div className={styles.cardNumber}>•••• •••• •••• {walletBalance > 0 ? '4242' : '0000'}</div>
+                                <div className={styles.cardDetails}>
+                                    <span>Wallet Balance</span>
+                                    <span>{walletBalance < cost.total ? 'Refill Required' : 'Active'}</span>
+                                </div>
+                                <div className={styles.cardLogo}>WALLET</div>
+                            </div>
                         </div>
 
-                        <div className={styles.alertBox}>
-                            <CreditCard size={18} />
-                            <span>This is a secure sandbox transaction. No real money will be charged.</span>
-                        </div>
+                        {walletBalance < cost.total ? (
+                            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-start gap-3 mt-4 animate-slideDown">
+                                <X size={18} className="text-red-400 mt-0.5" />
+                                <div>
+                                    <p className="text-sm font-bold text-red-200">Insufficient Funds</p>
+                                    <p className="text-xs text-red-100/60 leading-relaxed">You need PKR {cost.total - walletBalance} more in your wallet to confirm this reservation.</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className={styles.alertBox}>
+                                <CreditCard size={18} />
+                                <span>Funds will be deducted from your wallet balance instantly.</span>
+                            </div>
+                        )}
 
                         <div className={styles.summary}>
                             <div className={`${styles.summaryRow} ${styles.total}`}>
@@ -144,8 +162,12 @@ function ReservationModal({ facility, onClose, onConfirm }) {
                             </div>
                         </div>
 
-                        <button onClick={handlePayment} className={styles.btnPrimary}>
-                            Pay & Reserve
+                        <button
+                            onClick={handlePayment}
+                            disabled={walletBalance < cost.total}
+                            className={`${styles.btnPrimary} ${walletBalance < cost.total ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}
+                        >
+                            {walletBalance < cost.total ? 'Insufficient Balance' : 'Pay & Reserve'}
                         </button>
 
                         {/* Prototype Bypass Button */}

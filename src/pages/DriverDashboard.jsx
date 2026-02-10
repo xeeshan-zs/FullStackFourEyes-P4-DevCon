@@ -22,7 +22,7 @@ function DriverDashboard() {
     const [selectedFacility, setSelectedFacility] = useState(null);
     const [showReservationModal, setShowReservationModal] = useState(false);
     const [showWallet, setShowWallet] = useState(false);
-    const [walletBalance, setWalletBalance] = useState(2500);
+    const [walletBalance, setWalletBalance] = useState(0);
     const [paymentMethods, setPaymentMethods] = useState([
         { id: 1, type: 'visa', last4: '4242', exp: '12/25', isDefault: true },
         { id: 2, type: 'mastercard', last4: '8888', exp: '09/24', isDefault: false }
@@ -123,6 +123,14 @@ function DriverDashboard() {
     };
 
     const handleConfirmReservation = async (reservationData) => {
+        // Strict financial check
+        const totalCost = reservationData.totalCost || 0;
+
+        if (walletBalance < totalCost) {
+            alert(`Insufficient balance. You need PKR ${totalCost} but only have PKR ${walletBalance}.`);
+            return;
+        }
+
         const result = await createReservation({
             ...reservationData,
             userId: user?.uid || 'anonymous',
@@ -130,6 +138,9 @@ function DriverDashboard() {
         });
 
         if (result.success) {
+            // Deduct from wallet balance
+            setWalletBalance(prev => prev - totalCost);
+
             setShowReservationModal(false);
             setSelectedFacility(null);
             // Optional: Show success toast
@@ -243,6 +254,7 @@ function DriverDashboard() {
                         setSelectedFacility(null);
                     }}
                     onConfirm={handleConfirmReservation}
+                    walletBalance={walletBalance}
                 />
             )}
 
