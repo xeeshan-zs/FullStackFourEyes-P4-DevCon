@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthChange } from '../services/authService';
+import { getUserProfile, initializeUserProfile } from '../services/userService';
 
 const UserContext = createContext();
 
@@ -24,8 +25,22 @@ export const UserProvider = ({ children }) => {
         }
 
         // Listen to Firebase auth state changes
-        const unsubscribe = onAuthChange((firebaseUser) => {
-            setUser(firebaseUser);
+        const unsubscribe = onAuthChange(async (firebaseUser) => {
+            if (firebaseUser) {
+                // Fetch profile data from Firestore
+                const profile = await getUserProfile(firebaseUser.uid);
+                if (profile) {
+                    setUser({ ...firebaseUser, ...profile });
+                    setRole(profile.role);
+                    localStorage.setItem('userRole', profile.role);
+                } else {
+                    // Fallback to minimal data if profile doesn't exist yet
+                    setUser(firebaseUser);
+                }
+            } else {
+                setUser(null);
+                setRole(null);
+            }
             setLoading(false);
         });
 
