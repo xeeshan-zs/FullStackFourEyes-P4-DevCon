@@ -6,19 +6,21 @@
 .container {
     height: 100vh;
     height: 100dvh;
-    /* Mobile viewport fix */
     display: flex;
     flex-direction: column;
     background: var(--color-background);
+    /* Now standardized to #0B1120 */
     overflow: hidden;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+    font-family: var(--font-body);
 }
 
 /* Header/Navbar */
 .header {
-    background: var(--color-background-elevated);
-    border-bottom: var(--border-width) solid var(--color-border);
+    background: rgba(11, 17, 32, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: var(--border-width) solid rgba(255, 255, 255, 0.05);
     box-shadow: var(--shadow-sm);
     z-index: var(--z-sticky);
 }
@@ -26,10 +28,25 @@
 .headerContent {
     max-width: 90rem;
     margin: 0 auto;
-    padding: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.searchContainer {
+    flex: 1;
+    max-width: 500px;
+    margin: 0 var(--space-md);
+    display: none;
+    /* Hide on small screens to avoid crowding */
+}
+
+@media (min-width: 1024px) {
+    .searchContainer {
+        display: block;
+    }
 }
 
 .logoGroup {
@@ -39,20 +56,28 @@
 }
 
 .logoBox {
-    background: rgba(59, 130, 246, 0.3);
-    /* Stronger contrast */
-    padding: 0.6rem;
-    border-radius: var(--radius-md);
-    border: var(--border-width) solid var(--color-primary);
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+    background: #0F172A;
+    /* Deep navy for high contrast */
+    padding: 0.5rem;
+    border-radius: var(--radius-xl);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logoIcon {
-    width: 2rem;
-    /* Resized */
-    height: 2rem;
-    color: white;
-    /* White icon on blue backdrop */
+    width: 2.25rem;
+    height: 2.25rem;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    /* Force white icon */
+    transition: transform var(--transition-base);
+}
+
+.logoBox:hover .logoIcon {
+    transform: scale(1.1);
 }
 
 .headerText h1 {
@@ -141,6 +166,7 @@
     flex: 1;
     position: relative;
     padding: var(--space-sm);
+    overflow-y: auto;
 }
 
 @media (min-width: 768px) {

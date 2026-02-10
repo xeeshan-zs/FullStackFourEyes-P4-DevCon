@@ -1,0 +1,287 @@
+/**
+ * ParkingList CSS
+ * Style: Technical Brutalist / OLED Dark
+ */
+
+.parking-list {
+    width: 100%;
+    color: var(--color-text);
+}
+
+/* Sort Controls */
+.sort-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-md);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(8px);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+}
+
+.sort-label {
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+}
+
+.sort-buttons {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.sort-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-xl);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.sort-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-text);
+}
+
+.sort-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #FFFFFF;
+    box-shadow: var(--glow-blue);
+}
+
+/* Grid Layout */
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-xl);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Facility Card */
+.facility-card {
+    background: var(--color-background-card);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.6s cubic-bezier(0.2, 1, 0.3, 1) backwards;
+}
+
+.facility-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), var(--glow-blue);
+}
+
+.facility-card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.facility-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.facility-card:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.facility-card:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.facility-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-primary);
+    box-shadow: var(--glow-blue), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.facility-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--color-primary);
+    transform: scaleY(0);
+    transition: transform var(--transition-base);
+}
+
+.facility-card:hover::after {
+    transform: scaleY(1);
+}
+
+/* Header */
+.facility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.facility-title h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-bold);
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+}
+
+.facility-type {
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    letter-spacing: 0.05em;
+}
+
+.surge-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid var(--color-cta);
+    color: var(--color-cta);
+    border-radius: var(--radius-xl);
+    font-size: 10px;
+    font-weight: var(--font-bold);
+    text-transform: uppercase;
+}
+
+/* Stats */
+.facility-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.stat svg {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.pricing-tier {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+    color: var(--color-text-dim);
+}
+
+/* Availability Bar */
+.availability-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin: var(--space-sm) 0;
+}
+
+.availability-fill {
+    height: 100%;
+    transition: width 1s ease-out;
+}
+
+.availability-fill.high {
+    background: var(--color-success);
+}
+
+.availability-fill.medium {
+    background: var(--color-warning);
+}
+
+.availability-fill.low {
+    background: var(--color-error);
+}
+
+/* Amenities */
+.facility-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
+
+.amenity-badge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border);
+    padding: 2px 8px;
+    border-radius: var(--radius-xl);
+    font-size: 10px;
+    color: var(--color-text-muted);
+}
+
+/* Action Button */
+.facility-action-btn {
+    margin-top: auto;
+    width: 100%;
+    padding: var(--space-md);
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: var(--font-bold);
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.facility-card:hover .facility-action-btn {
+    background: var(--color-primary);
+    color: #FFFFFF;
+}
+
+/* No Results */
+.no-results {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3xl);
+    color: var(--color-text-dim);
+    text-align: center;
+}
+
+.no-results p {
+    margin-top: var(--space-md);
+    font-weight: var(--font-bold);
+}
+
+.no-results-hint {
+    font-size: var(--text-sm);
+    font-weight: var(--font-normal) !important;
+}
+
+@media (max-width: 640px) {
+    .facilities-grid {
+        grid-template-columns: 1fr;
+    }
+}

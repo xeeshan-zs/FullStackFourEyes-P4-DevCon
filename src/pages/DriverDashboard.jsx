@@ -147,12 +147,20 @@ function DriverDashboard() {
                 <div className={styles.headerContent}>
                     <div className={styles.logoGroup}>
                         <div className={styles.logoBox}>
-                            <img src="/app-logo.png" alt="App Logo" className="w-8 h-8 object-contain" />
+                            <img src="/app-logo.png" alt="App Logo" className={styles.logoIcon} />
                         </div>
                         <div className={styles.headerText}>
                             <h1>Hello, Driver! 👋</h1>
                             <p>Find your perfect spot</p>
                         </div>
+                    </div>
+
+                    {/* Standardized Search Bar Relocation */}
+                    <div className={styles.searchContainer}>
+                        <SearchFilters
+                            onSearch={handleSearch}
+                            onFilterChange={handleFilterChange}
+                        />
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -195,15 +203,6 @@ function DriverDashboard() {
 
             {/* Main Content Area */}
             <div className={styles.mapArea}>
-                {/* Search Overlay - Only show in map mode or always? Let's show always but positioned differently if needed */}
-                <div className="absolute top-4 left-4 z-[400] w-full max-w-md px-4 pointer-events-none">
-                    <div className="pointer-events-auto">
-                        <SearchFilters
-                            onSearch={handleSearch}
-                            onFilterChange={handleFilterChange}
-                        />
-                    </div>
-                </div>
 
                 {viewMode === 'map' ? (
                     <>
@@ -220,7 +219,7 @@ function DriverDashboard() {
                         )}
                     </>
                 ) : (
-                    <div className="max-w-4xl mx-auto pb-20 pt-24 px-4 h-full overflow-y-auto">
+                    <div className="max-w-7xl mx-auto pb-20 pt-10 px-4 h-full overflow-y-auto custom-scrollbar">
                         <ParkingList
                             facilities={filteredFacilities}
                             onSelectFacility={handleReserve}

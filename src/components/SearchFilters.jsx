@@ -48,7 +48,6 @@ function SearchFilters({ onFilterChange, onSearch }) {
             {/* Search Bar */}
             <div className={styles.searchBarContainer}>
                 <div className={styles.searchInputWrapper}>
-                    <Search className={styles.searchIcon} size={20} />
                     <input
                         type="text"
                         placeholder="Where do you want to park?"
@@ -56,30 +55,35 @@ function SearchFilters({ onFilterChange, onSearch }) {
                         onChange={handleSearchChange}
                         className={styles.searchInput}
                     />
+                    {/* The "start" icon moved to be after text as requested */}
+                    <Search className={styles.searchIcon} size={18} strokeWidth={1} />
+
                     {searchQuery && (
-                        <button onClick={clearSearch} className="text-white/60 hover:text-white transition-colors mr-2">
-                            <X size={16} />
+                        <button onClick={clearSearch} className="text-white/40 hover:text-white transition-colors mr-2">
+                            <X size={14} />
                         </button>
                     )}
                 </div>
 
-                {/* Filters Toggle */}
-                <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className={styles.filterToggleBtn}
-                    title="Filters"
-                >
-                    <SlidersHorizontal size={20} />
-                </button>
+                <div className={styles.searchActions}>
+                    {/* Filters Toggle pushed to end */}
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={styles.filterToggleBtn}
+                        title="Filters"
+                    >
+                        <SlidersHorizontal size={18} strokeWidth={1.5} />
+                    </button>
 
-                {/* Primary Search Action */}
-                <button
-                    className={styles.searchButton}
-                    onClick={() => onSearch && onSearch(searchQuery)}
-                    title="Search"
-                >
-                    <Search size={20} />
-                </button>
+                    {/* Primary Search Action pushed to end */}
+                    <button
+                        className={styles.searchButton}
+                        onClick={() => onSearch && onSearch(searchQuery)}
+                        title="Search"
+                    >
+                        <Search size={20} strokeWidth={1.2} />
+                    </button>
+                </div>
             </div>
 
             {/* Advanced Filters Panel */}

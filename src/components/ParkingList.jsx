@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { MapPin, DollarSign, Clock, Navigation, Star, TrendingUp } from 'lucide-react';
 import { calculatePrice, getPricingTier } from '../utils/pricingEngine';
+import './ParkingList.css';
 
 function ParkingList({ facilities, onSelectFacility, sortBy = 'distance' }) {
     const [currentSort, setCurrentSort] = useState(sortBy);
