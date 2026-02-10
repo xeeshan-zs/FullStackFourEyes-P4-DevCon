@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Camera, Scan, LogOut, FileText } from 'lucide-react';
 import { signOut } from '../services/authService';
 import { useUser } from '../context/UserContext';
+import styles from './Dashboard.module.css';
 
 function OfficerDashboard() {
     const navigate = useNavigate();
@@ -14,109 +15,104 @@ function OfficerDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-500 to-red-500">
+        <div className={styles.container}>
             {/* Header */}
-            <div className="glass-dark border-b border-white/20">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg">
-                            <Camera className="w-6 h-6 text-white" />
+            <div className={styles.header}>
+                <div className={styles.headerContent}>
+                    <div className={styles.logoGroup}>
+                        <div className={styles.logoBox}>
+                            <Camera className={styles.logoIcon} />
                         </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-white">Officer Dashboard</h1>
-                            <p className="text-white/70 text-sm">Enforcement & Ticketing</p>
+                        <div className={styles.headerText}>
+                            <h1>Officer Dashboard</h1>
+                            <p>Enforcement & Ticketing</p>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all text-white"
+                        className={styles.logoutButton}
                     >
-                        <LogOut className="w-4 h-4" />
+                        <LogOut />
                         Logout
                     </button>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                <div className="glass rounded-3xl p-8 md:p-12 text-center mb-6">
-                    <div className="bg-white/20 p-6 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                        <Scan className="w-12 h-12 text-white" />
+            <div className={styles.main}>
+                <div className={styles.hero}>
+                    <div className={styles.heroIcon}>
+                        <Scan />
                     </div>
 
-                    <h2 className="text-4xl font-bold text-white mb-4">
+                    <h2 className={styles.heroTitle}>
                         Welcome, Officer! 👮
                     </h2>
 
-                    <p className="text-xl text-white/90 mb-8">
+                    <p className={styles.heroSubtitle}>
                         AI-powered license plate scanner coming in Module 5
                     </p>
 
                     {/* Main Action Button (Disabled for now) */}
                     <button
                         disabled
-                        className="px-8 py-4 bg-white/20 text-white rounded-2xl font-semibold cursor-not-allowed opacity-50 text-lg mb-8 border-2 border-dashed border-white/30"
+                        className={styles.featureItem}
+                        style={{ width: 'auto', display: 'inline-flex', margin: '0 auto', cursor: 'not-allowed', opacity: 0.5 }}
                     >
-                        <div className="flex items-center gap-3 justify-center">
-                            <Camera className="w-6 h-6" />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <Camera />
                             Scan License Plate (Module 5)
                         </div>
                     </button>
 
-                    <div className="space-y-4 max-w-md mx-auto">
-                        <div className="glass-dark rounded-2xl p-6 text-left">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-white/20 p-3 rounded-lg">
-                                    <Camera className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">📸 OCR Scanner</h3>
-                                    <p className="text-white/80 text-sm">
-                                        Upload car photo or use camera to scan license plates using Tesseract.js
-                                    </p>
-                                </div>
+                    <div style={{ marginTop: '2rem', display: 'grid', gap: '1rem', maxWidth: '28rem', margin: '2rem auto 0' }}>
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureCheck}>
+                                <Camera />
+                            </div>
+                            <div>
+                                <h3 className={styles.featureItemTitle}>📸 OCR Scanner</h3>
+                                <p className={styles.featureItemDesc}>
+                                    Upload car photo or use camera to scan license plates
+                                </p>
                             </div>
                         </div>
 
-                        <div className="glass-dark rounded-2xl p-6 text-left">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-white/20 p-3 rounded-lg">
-                                    <FileText className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">🎫 Auto-fill Tickets</h3>
-                                    <p className="text-white/80 text-sm">
-                                        Automatically populate ticket forms with extracted plate text
-                                    </p>
-                                </div>
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureCheck}>
+                                <FileText />
+                            </div>
+                            <div>
+                                <h3 className={styles.featureItemTitle}>🎫 Auto-fill Tickets</h3>
+                                <p className={styles.featureItemDesc}>
+                                    Automatically populate ticket forms with extracted plate text
+                                </p>
                             </div>
                         </div>
 
-                        <div className="glass-dark rounded-2xl p-6 text-left">
-                            <div className="flex items-start gap-4">
-                                <div className="bg-white/20 p-3 rounded-lg">
-                                    <Scan className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">⚡ Real-time Processing</h3>
-                                    <p className="text-white/80 text-sm">
-                                        Client-side OCR for instant results without server delays
-                                    </p>
-                                </div>
+                        <div className={styles.featureItem}>
+                            <div className={styles.featureCheck}>
+                                <Scan />
+                            </div>
+                            <div>
+                                <h3 className={styles.featureItemTitle}>⚡ Real-time Processing</h3>
+                                <p className={styles.featureItemDesc}>
+                                    Client-side OCR for instant results without server delays
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Stats Preview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="glass rounded-2xl p-6">
-                        <p className="text-white/70 text-sm mb-2">Tickets Issued Today</p>
-                        <p className="text-3xl font-bold text-white">Module 5</p>
+                <div className={styles.statsGrid} style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
+                    <div className={styles.statCard}>
+                        <p className={styles.statLabel}>Tickets Issued Today</p>
+                        <p className={styles.statValue}>Module 5</p>
                     </div>
-                    <div className="glass rounded-2xl p-6">
-                        <p className="text-white/70 text-sm mb-2">Active Violations</p>
-                        <p className="text-3xl font-bold text-white">Coming Soon</p>
+                    <div className={styles.statCard}>
+                        <p className={styles.statLabel}>Active Violations</p>
+                        <p className={styles.statValue}>Coming Soon</p>
                     </div>
                 </div>
             </div>

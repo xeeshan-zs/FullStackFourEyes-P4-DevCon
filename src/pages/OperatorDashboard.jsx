@@ -3,6 +3,7 @@ import { Building2, LayoutDashboard, Settings, LogOut, Car, AlertCircle } from '
 import { signOut } from '../services/authService';
 import { useUser } from '../context/UserContext';
 import SpotManager from '../components/SpotManager';
+import styles from './Dashboard.module.css';
 
 function OperatorDashboard() {
     const navigate = useNavigate();
@@ -15,78 +16,88 @@ function OperatorDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-500 to-teal-500">
+        <div className={styles.container}>
             {/* Header */}
-            <div className="glass-dark border-b border-white/20 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-lg">
-                            <Building2 className="w-6 h-6 text-white" />
+            <div className={styles.header}>
+                <div className={styles.headerContent}>
+                    <div className={styles.logoGroup}>
+                        <div className={styles.logoBox}>
+                            <Building2 className={styles.logoIcon} />
                         </div>
-                        <div>
-                            <h1 className="text-xl font-bold text-white">Operator Console</h1>
-                            <p className="text-white/70 text-sm">Parking Facility Manager</p>
+                        <div className={styles.headerText}>
+                            <h1>Operator Console</h1>
+                            <p>Parking Facility Manager</p>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all text-white"
+                        className={styles.logoutButton}
                     >
-                        <LogOut className="w-4 h-4" />
+                        <LogOut />
                         <span className="hidden md:inline">Logout</span>
                     </button>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className={styles.main}>
                 {/* Welcome Section */}
-                <div className="glass rounded-3xl p-8 mb-8 text-white">
-                    <h2 className="text-3xl font-bold mb-2">Facility Overview</h2>
-                    <p className="opacity-90">Manage your parking zones and real-time occupancy.</p>
+                <div className={styles.hero}>
+                    <div className={styles.heroIcon}>
+                        <LayoutDashboard />
+                    </div>
+                    <h2 className={styles.heroTitle}>Facility Overview</h2>
+                    <p className={styles.heroSubtitle}>Manage your parking zones and real-time occupancy.</p>
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div className="glass p-6 rounded-2xl text-white">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-white/20 rounded-xl">
-                                <Car className="w-6 h-6" />
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={styles.statHeader}>
+                            <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.2)' }}>
+                                <Car style={{ color: '#3B82F6' }} />
                             </div>
-                            <span className="bg-green-400/20 text-green-100 px-2 py-1 rounded text-xs font-bold">
+                            <span style={{
+                                background: 'rgba(16, 185, 129, 0.2)',
+                                color: '#10B981',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                fontSize: '10px',
+                                fontWeight: 'bold'
+                            }}>
                                 OPEN
                             </span>
                         </div>
-                        <p className="opacity-70 text-sm">Total Capacity</p>
-                        <h3 className="text-3xl font-bold">200</h3>
-                        <p className="text-xs mt-2 opacity-60">Spaces available</p>
+                        <p className={styles.statLabel}>Total Capacity</p>
+                        <p className={styles.statValue}>200</p>
+                        <p className={styles.statNote}>Spaces available</p>
                     </div>
 
-                    <div className="glass p-6 rounded-2xl text-white">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-white/20 rounded-xl">
-                                <LayoutDashboard className="w-6 h-6" />
+                    <div className={styles.statCard}>
+                        <div className={styles.statHeader}>
+                            <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.2)' }}>
+                                <LayoutDashboard style={{ color: '#3B82F6' }} />
                             </div>
                         </div>
-                        <p className="opacity-70 text-sm">Occupancy Rate</p>
-                        <h3 className="text-3xl font-bold">72%</h3>
-                        <p className="text-xs mt-2 opacity-60">+5% from last hour</p>
+                        <p className={styles.statLabel}>Occupancy Rate</p>
+                        <p className={styles.statValue}>72%</p>
+                        <p className={styles.statNote}>+5% from last hour</p>
                     </div>
 
-                    <div className="glass p-6 rounded-2xl text-white">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-3 bg-white/20 rounded-xl">
-                                <AlertCircle className="w-6 h-6" />
+                    <div className={styles.statCard}>
+                        <div className={styles.statHeader}>
+                            <div className={styles.statIcon} style={{ background: 'rgba(249, 115, 22, 0.2)' }}>
+                                <AlertCircle style={{ color: '#F97316' }} />
                             </div>
                         </div>
-                        <p className="opacity-70 text-sm">Issues</p>
-                        <h3 className="text-3xl font-bold">2</h3>
-                        <p className="text-xs mt-2 opacity-60">Sensors offline</p>
+                        <p className={styles.statLabel}>Issues</p>
+                        <p className={styles.statValue}>2</p>
+                        <p className={styles.statNote}>Sensors offline</p>
                     </div>
                 </div>
 
                 {/* Spot Management System */}
-                <div className="mb-8">
+                <div style={{ marginBottom: '2rem' }}>
                     <SpotManager />
                 </div>
             </div>

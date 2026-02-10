@@ -31,7 +31,7 @@ const greenIcon = new L.DivIcon({
 
 const redIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowUrl: iconShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -48,28 +48,40 @@ const orangeIcon = new L.DivIcon({
     popupAnchor: [1, -34],
 });
 
-function MapComponent() {
+function MapComponent({ facilities: propFacilities, onSelectFacility }) {
     const [facilities, setFacilities] = useState([]);
     const [loading, setLoading] = useState(true);
-    const centerPositions = [40.7128, -74.0060]; // NYC Center for demo
+    const centerPositions = [51.505, -0.09]; // London Center for mock data (was NYC)
 
-    // State for selected facility (drawer)
-    const [selectedFacility, setSelectedFacility] = useState(null);
+    // State for selected facility (drawer) - internal state if no prop handler
+    const [internalSelected, setInternalSelected] = useState(null);
 
     useEffect(() => {
-        const fetchFacilities = async () => {
-            try {
-                const data = await getParkingFacilities();
-                setFacilities(data);
-            } catch (error) {
-                console.error("Failed to fetch parking data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (propFacilities) {
+            setFacilities(propFacilities);
+            setLoading(false);
+        } else {
+            const fetchFacilities = async () => {
+                try {
+                    const data = await getParkingFacilities();
+                    setFacilities(data);
+                } catch (error) {
+                    console.error("Failed to fetch parking data", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchFacilities();
+        }
+    }, [propFacilities]);
 
-        fetchFacilities();
-    }, []);
+    const handleMarkerClick = (facility) => {
+        if (onSelectFacility) {
+            onSelectFacility(facility);
+        } else {
+            setInternalSelected(facility);
+        }
+    };
 
     const getMarkerIcon = (facility) => {
         if (facility.status === 'FULL' || facility.availableSpots === 0) return redIcon;
@@ -103,7 +115,7 @@ function MapComponent() {
                                 position={[facility.location.lat, facility.location.lng]}
                                 icon={getMarkerIcon(facility)}
                                 eventHandlers={{
-                                    click: () => setSelectedFacility(facility),
+                                    click: () => handleMarkerClick(facility),
                                 }}
                             />
                         ))}
@@ -111,14 +123,14 @@ function MapComponent() {
                 )}
             </div>
 
-            {/* Drawer Integration */}
-            {selectedFacility && (
+            {/* Drawer Integration (only if using internal state) */}
+            {!onSelectFacility && internalSelected && (
                 <ParkingSpotDrawer
-                    facility={selectedFacility}
-                    onClose={() => setSelectedFacility(null)}
+                    facility={internalSelected}
+                    onClose={() => setInternalSelected(null)}
                     onReserve={(facility) => {
                         alert(`Reservation for ${facility.name} starting... (Module 4)`);
-                        setSelectedFacility(null);
+                        setInternalSelected(null);
                     }}
                 />
             )}
